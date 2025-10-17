@@ -19,6 +19,16 @@ object IOSPlatform: Platform {
     override fun getDynamicColor(darkTheme: Boolean): ColorScheme? {
         TODO("Not yet implemented")
     }
+
+    @Composable
+    override fun isPortrait(): Boolean {
+        TODO("Not yet implemented")
+    }
+
+    @Composable
+    override fun isLandscape(): Boolean {
+        TODO("Not yet implemented")
+    }
 }
 
 actual fun getPlatform(): Platform = IOSPlatform

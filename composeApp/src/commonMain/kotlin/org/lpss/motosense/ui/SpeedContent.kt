@@ -18,26 +18,27 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import org.lpss.motosense.getPlatform
-import kotlin.math.roundToInt
+import kotlin.math.round
 
 @Composable
-fun AltitudeContent(
+fun SpeedContent(
     modifier: Modifier = Modifier,
-    altitude: Float,
+    speed: Float,
 ) {
     val elevationType = when {
-        altitude >= 2500 -> "Mountain"
-        altitude >= 300 -> "Hill"
-        else -> "Lowland"
+        speed >= 90 -> "Fast"
+        speed >= 60 -> "Normal"
+        else -> "Slow"
     }
 
     val icon = when {
-        altitude >= 2500 -> Icons.Outlined.AirplanemodeActive
-        altitude >= 300 -> Icons.Outlined.Crop
+        speed >= 90 -> Icons.Outlined.AirplanemodeActive
+        speed >= 60 -> Icons.Outlined.Crop
         else -> Icons.Outlined.LocationCity
     }
 
@@ -47,54 +48,54 @@ fun AltitudeContent(
     ) {
         Icon(
             modifier = modifier
-                .align(Alignment.CenterEnd)
+                .align(Alignment.CenterStart)
                 .fillMaxHeight(0.9f)
-                .aspectRatio(1f),
+                .aspectRatio(1f)
+                .alpha(0.5f),
             imageVector = icon,
             contentDescription = null,
-            tint = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.18f)
         )
 
         if (getPlatform().isPortrait()) {
             Text(
                 modifier = modifier
                     .fillMaxWidth()
-                    .padding(start = 8.dp, top = 8.dp)
-                    .align(Alignment.TopStart),
-                text = "Altitude:",
+                    .padding(end = 8.dp, top = 8.dp)
+                    .align(Alignment.TopEnd),
+                text = "Speed:",
                 style = MaterialTheme.typography.headlineMedium,
                 fontWeight = FontWeight.Bold,
-                textAlign = TextAlign.Start,
+                textAlign = TextAlign.End,
             )
         }
 
         Column(
             modifier = modifier
-                .align(Alignment.CenterStart)
+                .align(Alignment.CenterEnd)
                 .fillMaxSize(),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             val text = if (getPlatform().isPortrait())
-                "${altitude.roundToInt()} m"
+                "${round(speed)} km/h"
             else
-                "Altitude: ${altitude.roundToInt()} m"
+                "Speed: ${round(speed)} km/h"
             Text(
                 modifier = modifier
                     .fillMaxWidth()
-                    .padding(start = 8.dp),
+                    .padding(end = 8.dp),
                 text = text,
                 style = MaterialTheme.typography.headlineMedium,
                 fontWeight = FontWeight.Bold,
-                textAlign = TextAlign.Start,
+                textAlign = TextAlign.End,
             )
             Text(
                 modifier = modifier
                     .fillMaxWidth()
-                    .padding(start = 8.dp),
+                    .padding(end = 8.dp),
                 text = elevationType,
-                style = MaterialTheme.typography.bodyLarge,
-                textAlign = TextAlign.Start,
+                style = MaterialTheme.typography.bodySmall,
+                textAlign = TextAlign.End,
             )
         }
     }

@@ -13,6 +13,12 @@ interface Platform {
 
     @Composable
     fun getDynamicColor(darkTheme: Boolean): ColorScheme?
+
+    @Composable
+    fun isPortrait(): Boolean
+
+    @Composable
+    fun isLandscape(): Boolean
 }
 
 expect fun getPlatform(): Platform

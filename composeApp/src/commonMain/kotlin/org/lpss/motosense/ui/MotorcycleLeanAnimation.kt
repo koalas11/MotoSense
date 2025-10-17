@@ -1,8 +1,7 @@
 package org.lpss.motosense.ui
 
-import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.core.spring
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -36,9 +35,7 @@ fun MotorcycleLeanAnimation(
     val imageVector = painterResource(Res.drawable.motorbike_svg)
     val animatedAngle by animateFloatAsState(
         targetValue = leanAngle,
-        animationSpec = spring(
-            dampingRatio = Spring.DampingRatioMediumBouncy,
-            stiffness = Spring.StiffnessLow
+        animationSpec = tween(
         )
     )
     Icon(

@@ -6,6 +6,7 @@ import androidx.compose.material3.dynamicDarkColorScheme
 import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalConfiguration
 
 object AndroidPlatform : Platform {
     override val name: String = "Android ${Build.VERSION.SDK_INT}"
@@ -26,6 +27,18 @@ object AndroidPlatform : Platform {
             )
         }
         return null
+    }
+
+    @Composable
+    override fun isPortrait(): Boolean {
+        val configuration = LocalConfiguration.current
+        return configuration.orientation == android.content.res.Configuration.ORIENTATION_PORTRAIT
+    }
+
+    @Composable
+    override fun isLandscape(): Boolean {
+        val configuration = LocalConfiguration.current
+        return configuration.orientation == android.content.res.Configuration.ORIENTATION_LANDSCAPE
     }
 }
 

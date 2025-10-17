@@ -18,26 +18,27 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import org.lpss.motosense.getPlatform
-import kotlin.math.roundToInt
+import kotlin.math.round
 
 @Composable
-fun AltitudeContent(
+fun SlopeContent(
     modifier: Modifier = Modifier,
-    altitude: Float,
+    slope: Float,
 ) {
     val elevationType = when {
-        altitude >= 2500 -> "Mountain"
-        altitude >= 300 -> "Hill"
+        slope >= 60 -> "Mountain"
+        slope >= 30 -> "Hill"
         else -> "Lowland"
     }
 
     val icon = when {
-        altitude >= 2500 -> Icons.Outlined.AirplanemodeActive
-        altitude >= 300 -> Icons.Outlined.Crop
+        slope >= 60 -> Icons.Outlined.AirplanemodeActive
+        slope >= 30 -> Icons.Outlined.Crop
         else -> Icons.Outlined.LocationCity
     }
 
@@ -49,10 +50,10 @@ fun AltitudeContent(
             modifier = modifier
                 .align(Alignment.CenterEnd)
                 .fillMaxHeight(0.9f)
-                .aspectRatio(1f),
+                .aspectRatio(1f)
+                .alpha(0.5f),
             imageVector = icon,
             contentDescription = null,
-            tint = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.18f)
         )
 
         if (getPlatform().isPortrait()) {
@@ -61,7 +62,7 @@ fun AltitudeContent(
                     .fillMaxWidth()
                     .padding(start = 8.dp, top = 8.dp)
                     .align(Alignment.TopStart),
-                text = "Altitude:",
+                text = "Slope Angle:",
                 style = MaterialTheme.typography.headlineMedium,
                 fontWeight = FontWeight.Bold,
                 textAlign = TextAlign.Start,
@@ -76,9 +77,9 @@ fun AltitudeContent(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             val text = if (getPlatform().isPortrait())
-                "${altitude.roundToInt()} m"
+                "${round(slope)} %"
             else
-                "Altitude: ${altitude.roundToInt()} m"
+                "Slope Angle: ${round(slope)} %"
             Text(
                 modifier = modifier
                     .fillMaxWidth()
@@ -93,7 +94,7 @@ fun AltitudeContent(
                     .fillMaxWidth()
                     .padding(start = 8.dp),
                 text = elevationType,
-                style = MaterialTheme.typography.bodyLarge,
+                style = MaterialTheme.typography.bodySmall,
                 textAlign = TextAlign.Start,
             )
         }
