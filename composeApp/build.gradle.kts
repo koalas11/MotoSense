@@ -86,20 +86,23 @@ android {
         }
     }
     buildTypes {
-        getByName("release") {
+        debug {
+            isDebuggable = true
+            isJniDebuggable = true
             isMinifyEnabled = false
+            isShrinkResources = false
+        }
+        release {
+            isDebuggable = false
+            isJniDebuggable = false
+            isMinifyEnabled = true
+            isShrinkResources = true
         }
     }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
-}
-
-compose.resources {
-    publicResClass = true
-    packageOfResClass = "org.lpss.motosense.resources"
-    generateResClass = auto
 }
 
 room {

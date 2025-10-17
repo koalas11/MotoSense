@@ -21,7 +21,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import org.lpss.motosense.getPlatform
+import org.lpss.motosense.platform
 import kotlin.math.roundToInt
 
 @Composable
@@ -55,7 +55,7 @@ fun AltitudeContent(
             tint = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.18f)
         )
 
-        if (getPlatform().isPortrait()) {
+        if (platform.isPortrait()) {
             Text(
                 modifier = modifier
                     .fillMaxWidth()
@@ -75,7 +75,7 @@ fun AltitudeContent(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            val text = if (getPlatform().isPortrait())
+            val text = if (platform.isPortrait())
                 "${altitude.roundToInt()} m"
             else
                 "Altitude: ${altitude.roundToInt()} m"

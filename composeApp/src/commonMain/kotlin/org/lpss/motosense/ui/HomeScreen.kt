@@ -17,7 +17,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import org.lpss.motosense.getPlatform
+import org.lpss.motosense.platform
 import org.lpss.motosense.viewmodel.AppViewModel
 
 @Composable
@@ -28,7 +28,7 @@ fun HomeScreen(
     Column(
         modifier = modifier,
     ) {
-        val weightValue = if (getPlatform().isPortrait()) 0.45f else 0.35f
+        val weightValue = if (platform.isPortrait()) 0.45f else 0.35f
         Row(
             modifier = modifier
                 .fillMaxWidth()

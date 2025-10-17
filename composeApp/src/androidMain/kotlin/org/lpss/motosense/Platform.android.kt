@@ -5,8 +5,8 @@ import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.dynamicDarkColorScheme
 import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 
 object AndroidPlatform : Platform {
     override val name: String = "Android ${Build.VERSION.SDK_INT}"
@@ -42,4 +42,4 @@ object AndroidPlatform : Platform {
     }
 }
 
-actual fun getPlatform(): Platform = AndroidPlatform
+actual val platform: Platform = AndroidPlatform

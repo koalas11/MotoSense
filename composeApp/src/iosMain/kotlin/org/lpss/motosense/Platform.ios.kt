@@ -31,4 +31,4 @@ object IOSPlatform: Platform {
     }
 }
 
-actual fun getPlatform(): Platform = IOSPlatform
+actual val platform: Platform = IOSPlatform

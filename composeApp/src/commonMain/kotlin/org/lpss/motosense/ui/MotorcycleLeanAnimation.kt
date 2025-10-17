@@ -21,10 +21,10 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import motosense.composeapp.generated.resources.Res
+import motosense.composeapp.generated.resources.motorbike_svg
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
-import org.lpss.motosense.resources.Res
-import org.lpss.motosense.resources.motorbike_svg
 
 
 @Composable

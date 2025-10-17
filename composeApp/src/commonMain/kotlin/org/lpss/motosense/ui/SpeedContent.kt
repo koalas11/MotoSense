@@ -22,7 +22,7 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import org.lpss.motosense.getPlatform
+import org.lpss.motosense.platform
 import kotlin.math.round
 
 @Composable
@@ -56,7 +56,7 @@ fun SpeedContent(
             contentDescription = null,
         )
 
-        if (getPlatform().isPortrait()) {
+        if (platform.isPortrait()) {
             Text(
                 modifier = modifier
                     .fillMaxWidth()
@@ -76,7 +76,7 @@ fun SpeedContent(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            val text = if (getPlatform().isPortrait())
+            val text = if (platform.isPortrait())
                 "${round(speed)} km/h"
             else
                 "Speed: ${round(speed)} km/h"

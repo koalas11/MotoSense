@@ -21,4 +21,4 @@ interface Platform {
     fun isLandscape(): Boolean
 }
 
-expect fun getPlatform(): Platform
+expect val platform: Platform
