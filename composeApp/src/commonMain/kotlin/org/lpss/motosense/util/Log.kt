@@ -11,25 +11,27 @@ expect fun logNative(
     level: Level,
     tag: String?,
     msg: String,
+    tr: Throwable?,
 )
 
 object Log {
-    fun i(tag: String?, msg: String) {
-        logNative(Level.INFO, tag, msg)
+    fun i(tag: String?, msg: String, tr: Throwable? = null) {
+        logNative(Level.INFO, tag, msg, tr)
     }
 
-    fun d(tag: String?, msg: String) {
-        logNative(Level.DEBUG, tag, msg)
+    fun d(tag: String?, msg: String, tr: Throwable? = null) {
+        logNative(Level.DEBUG, tag, msg, tr)
     }
 
-    fun w(tag: String?, msg: String) {
-        logNative(Level.WARN, tag, msg)
+    fun w(tag: String?, msg: String, tr: Throwable? = null) {
+        logNative(Level.WARN, tag, msg, tr)
     }
 
-    fun e(tag: String?, msg: String) {
-        logNative(Level.ERROR, tag, msg)
+    fun e(tag: String?, msg: String, tr: Throwable? = null) {
+        logNative(Level.ERROR, tag, msg, tr)
     }
 
+    @Suppress("unused")
     fun log(level: Level, tag: String?, msg: String) {
         when (level) {
             is Level.INFO -> i(tag, msg)

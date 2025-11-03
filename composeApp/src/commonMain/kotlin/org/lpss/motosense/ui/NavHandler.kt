@@ -8,16 +8,11 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavHostController
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation3.runtime.entryProvider
+import androidx.navigation3.ui.NavDisplay
 import org.lpss.motosense.ui.navigation.ScreenRoute
 import org.lpss.motosense.viewmodel.AppViewModel
 
@@ -25,10 +20,8 @@ import org.lpss.motosense.viewmodel.AppViewModel
 @Composable
 fun NavHandler(
     modifier: Modifier = Modifier,
-    navController: NavHostController = rememberNavController(),
-    appViewModel: AppViewModel = viewModel(factory = AppViewModel.Factory)
+    appViewModel: AppViewModel,
 ) {
-    var currentRoute: ScreenRoute by remember { mutableStateOf(ScreenRoute.Home) }
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
 
     Scaffold(
@@ -36,33 +29,35 @@ fun NavHandler(
         topBar = {
             MotoSenseTopBar(
                 modifier = modifier,
-                navController = navController,
-                currentDestination = currentRoute,
+                appViewModel = appViewModel,
                 scrollBehavior = scrollBehavior,
             )
         },
-    ) { innerPadding ->
-        NavHost(
+    ) { paddingValues ->
+        val backStack by appViewModel.backStack.collectAsStateWithLifecycle()
+        NavDisplay(
+            backStack = backStack,
             modifier = modifier
-                .padding(innerPadding)
+                .padding(paddingValues)
                 .fillMaxSize(),
-            navController = navController,
-            startDestination = ScreenRoute.Home,
-        ) {
-            composable<ScreenRoute.Home> {
-                currentRoute = ScreenRoute.Home
-                HomeScreen(
-                    modifier = modifier,
-                    appViewModel = appViewModel,
-                )
+            onBack = {
+                appViewModel.navigateBack()
+            },
+            entryProvider = entryProvider {
+                entry<ScreenRoute.Home> {
+                    HomeScreen(
+                        modifier = modifier,
+                        appViewModel = appViewModel,
+                    )
+                }
+
+                entry<ScreenRoute.Debug> {
+                    DebugScreen(
+                        modifier = modifier,
+                        appViewModel = appViewModel,
+                    )
+                }
             }
-            composable<ScreenRoute.Debug> {
-                currentRoute = ScreenRoute.Debug
-                DebugScreen(
-                    modifier = modifier,
-                    appViewModel = appViewModel,
-                )
-            }
-        }
+        )
     }
 }

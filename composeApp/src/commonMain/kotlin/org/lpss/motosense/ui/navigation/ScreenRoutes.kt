@@ -1,10 +1,11 @@
 package org.lpss.motosense.ui.navigation
 
+import androidx.navigation3.runtime.NavKey
 import kotlinx.serialization.Serializable
 
-interface ScreenRoute {
+interface ScreenRoute: NavKey {
     @Serializable
-    object Home: ScreenRoute
+    data object Home: ScreenRoute
     @Serializable
-    object Debug: ScreenRoute
+    data object Debug: ScreenRoute
 }

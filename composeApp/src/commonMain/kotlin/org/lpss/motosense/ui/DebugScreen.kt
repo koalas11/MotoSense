@@ -3,6 +3,7 @@ package org.lpss.motosense.ui
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
+import androidx.compose.material3.Checkbox
 import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -10,6 +11,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import org.lpss.motosense.viewmodel.AppState
 import org.lpss.motosense.viewmodel.AppViewModel
 
 @Composable
@@ -76,5 +78,20 @@ fun DebugScreen(
         ) {
             Text("Start Simulation")
         }
+
+        val settingState by appViewModel.settingsStateFlow.collectAsStateWithLifecycle()
+        val settings = (settingState as AppState.Success).settings
+
+        Text(
+            modifier = modifier,
+            text = "Dynamic Theme",
+        )
+        Checkbox(
+            modifier = modifier,
+            checked = settings.enableDynamicTheme,
+            onCheckedChange = {
+                appViewModel.updateSettings(it)
+            }
+        )
     }
 }

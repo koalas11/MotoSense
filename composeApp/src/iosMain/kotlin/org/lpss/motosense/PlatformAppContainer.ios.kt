@@ -1,4 +1,4 @@
 package org.lpss.motosense
 
-class IOSAppContainer : PlatformAppContainer, AppContainer() {
+class IOSAppContainer : PlatformAppContainer, AppContainerImpl(IosContext()) {
 }

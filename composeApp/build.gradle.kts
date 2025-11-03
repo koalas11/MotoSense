@@ -38,7 +38,7 @@ kotlin {
             implementation(compose.material3)
             implementation(compose.ui)
             implementation(compose.components.resources)
-            implementation(compose.components.uiToolingPreview)
+            implementation(compose.preview)
             implementation(compose.materialIconsExtended)
             implementation(libs.androidx.lifecycle.viewmodelCompose)
             implementation(libs.androidx.lifecycle.runtimeCompose)
@@ -50,7 +50,10 @@ kotlin {
             implementation(libs.serialization.core)
             implementation(libs.serialization.protobuf)
 
-            implementation(libs.navigation.compose)
+            /* NAVIGATION 3 */
+            implementation(libs.androidx.navigation3.runtime)
+            implementation(libs.androidx.navigation3.ui)
+            implementation(libs.androidx.lifecycle.viewmodel.navigation3)
 
             /* ROOM */
             implementation(libs.androidx.sqlite.bundled)

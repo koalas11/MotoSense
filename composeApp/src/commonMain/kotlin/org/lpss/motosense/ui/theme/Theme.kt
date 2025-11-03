@@ -5,8 +5,11 @@ import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.graphics.Color
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import org.lpss.motosense.platform
+import org.lpss.motosense.viewmodel.AppViewModel
 
 private val lightScheme = lightColorScheme(
     primary = primaryLight,
@@ -250,14 +253,15 @@ val unspecified_scheme = ColorFamily(
 
 @Composable
 fun MotoSenseTheme(
-    dynamicColor: Boolean = true,
+    appViewModel: AppViewModel,
     content: @Composable() () -> Unit
 ) {
     val platform = platform
     val darkTheme = platform.isSystemInDarkTheme()
     val dynamicScheme = platform.getDynamicColor(darkTheme)
+    val enableDynamicTheme by appViewModel.dynamicThemeStateFlow.collectAsStateWithLifecycle()
     val colorScheme = when {
-        dynamicColor && dynamicScheme != null -> dynamicScheme
+        enableDynamicTheme && dynamicScheme != null -> dynamicScheme
         darkTheme -> darkScheme
         else -> lightScheme
     }

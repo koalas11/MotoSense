@@ -7,20 +7,21 @@ androidx-activity = "1.11.0"
 androidx-appcompat = "1.7.1"
 androidx-core = "1.17.0"
 androidx-espresso = "3.7.0"
-androidx-lifecycle = "2.9.4"
+androidx-lifecycle = "2.10.0-alpha03"
 androidx-testExt = "1.3.0"
-compose-multiplatform = "1.9.0"
+compose-multiplatform = "1.10.0-alpha03"
 androidx-window = "1.4.0"
-androidx-savedstate = "1.3.4"
+androidx-savedstate = "1.3.5"
 junit = "4.13.2"
-kotlin = "2.2.20"
-navigation-compose = "2.9.0"
+kotlin = "2.2.21"
 kotlinx-serialization = "1.9.0"
-room = "2.8.2"
+room = "2.8.3"
 sqlite = "2.6.1"
-ksp = "2.2.20-2.0.4"
+ksp = "2.3.0"
 datastore = "1.1.7"
 vico = "2.2.1"
+nav3-core = "1.0.0-beta1"
+nav3-ui = "1.0.0-alpha03"
 
 [libraries]
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
@@ -37,13 +38,15 @@ androidx-window-core = { module = "org.jetbrains.androidx.window:window-core", v
 androidx-savedstate = { module = "org.jetbrains.androidx.savedstate:savedstate", version.ref = "androidx-savedstate" }
 serialization-core = { module = "org.jetbrains.kotlinx:kotlinx-serialization-core", version.ref = "kotlinx-serialization" }
 serialization-protobuf = { module = "org.jetbrains.kotlinx:kotlinx-serialization-protobuf", version.ref = "kotlinx-serialization" }
-navigation-compose = { module = "org.jetbrains.androidx.navigation:navigation-compose", version.ref = "navigation-compose" }
 androidx-sqlite-bundled = { module = "androidx.sqlite:sqlite-bundled", version.ref = "sqlite" }
 androidx-room-runtime = { module = "androidx.room:room-runtime", version.ref = "room" }
 androidx-room-compiler = { module = "androidx.room:room-compiler", version.ref = "room" }
-androidx-datastore-core = { module = "androidx.datastore:datastore-core", version.ref = "datastore" }
+androidx-datastore-core = { module = "androidx.datastore:datastore-core-okio", version.ref = "datastore" }
 vico-multiplatform = { group = "com.patrykandpatrick.vico", name = "multiplatform", version.ref = "vico" }
 vico-multiplatform-m3 = { group = "com.patrykandpatrick.vico", name = "multiplatform-m3", version.ref = "vico" }
+androidx-navigation3-runtime = { module = "androidx.navigation3:navigation3-runtime", version.ref = "nav3-core" }
+androidx-navigation3-ui = { module = "org.jetbrains.androidx.navigation3:navigation3-ui", version.ref = "nav3-ui" }
+androidx-lifecycle-viewmodel-navigation3 = { module = "org.jetbrains.androidx.lifecycle:lifecycle-viewmodel-navigation3", version.ref = "androidx-lifecycle" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }

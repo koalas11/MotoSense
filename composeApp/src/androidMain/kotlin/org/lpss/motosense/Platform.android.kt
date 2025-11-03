@@ -1,5 +1,6 @@
 package org.lpss.motosense
 
+import android.content.res.Configuration
 import android.os.Build
 import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.dynamicDarkColorScheme
@@ -22,9 +23,10 @@ object AndroidPlatform : Platform {
     override fun getDynamicColor(darkTheme: Boolean): ColorScheme? {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             val context = LocalContext.current
-            return if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(
-                context
-            )
+            return if (darkTheme)
+                dynamicDarkColorScheme(context)
+            else
+                dynamicLightColorScheme(context)
         }
         return null
     }
@@ -32,13 +34,13 @@ object AndroidPlatform : Platform {
     @Composable
     override fun isPortrait(): Boolean {
         val configuration = LocalConfiguration.current
-        return configuration.orientation == android.content.res.Configuration.ORIENTATION_PORTRAIT
+        return configuration.orientation == Configuration.ORIENTATION_PORTRAIT
     }
 
     @Composable
     override fun isLandscape(): Boolean {
         val configuration = LocalConfiguration.current
-        return configuration.orientation == android.content.res.Configuration.ORIENTATION_LANDSCAPE
+        return configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
     }
 }
 

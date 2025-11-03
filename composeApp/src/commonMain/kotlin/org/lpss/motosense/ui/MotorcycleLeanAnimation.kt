@@ -20,12 +20,11 @@ import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import motosense.composeapp.generated.resources.Res
 import motosense.composeapp.generated.resources.motorbike_svg
 import org.jetbrains.compose.resources.painterResource
-import org.jetbrains.compose.ui.tooling.preview.Preview
-
 
 @Composable
 fun MotorcycleLeanAnimation(

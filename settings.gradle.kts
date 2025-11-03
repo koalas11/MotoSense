@@ -8,7 +8,7 @@ pluginManagement {
                 includeGroupAndSubgroups("androidx")
                 includeGroupAndSubgroups("com.android")
                 includeGroupAndSubgroups("com.google")
-                includeGroupAndSubgroups("org.jetbrains.kotlin")
+                includeGroupAndSubgroups("org.jetbrains")
             }
         }
         mavenCentral()
@@ -23,7 +23,7 @@ dependencyResolutionManagement {
                 includeGroupAndSubgroups("androidx")
                 includeGroupAndSubgroups("com.android")
                 includeGroupAndSubgroups("com.google")
-                includeGroupAndSubgroups("org.jetbrains.kotlin")
+                includeGroupAndSubgroups("org.jetbrains")
             }
         }
         mavenCentral()

@@ -4,22 +4,23 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.ui.platform.LocalContext
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         enableEdgeToEdge()
         super.onCreate(savedInstanceState)
 
+        val appContainer = (application as MotoSenseApp).appContainer
+
         setContent {
-            App()
+            val context = AndroidContext(LocalContext.current)
+            CompositionLocalProvider(
+                LocalPlatformContext provides context
+            ) {
+                App(appContainer = appContainer)
+            }
         }
     }
-}
-
-@Preview
-@Composable
-fun AppAndroidPreview() {
-    App()
 }

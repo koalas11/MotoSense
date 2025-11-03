@@ -10,18 +10,20 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.navigation.NavHostController
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import org.lpss.motosense.ui.navigation.ScreenRoute
+import org.lpss.motosense.viewmodel.AppViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MotoSenseTopBar(
     modifier: Modifier = Modifier,
-    navController: NavHostController,
-    currentDestination: ScreenRoute,
+    appViewModel: AppViewModel,
     scrollBehavior: TopAppBarScrollBehavior,
 ) {
+    val backStack by appViewModel.backStack.collectAsStateWithLifecycle()
     CenterAlignedTopAppBar(
         scrollBehavior = scrollBehavior,
         modifier = modifier,
@@ -32,11 +34,11 @@ fun MotoSenseTopBar(
             )
         },
         actions = {
-            if (currentDestination is ScreenRoute.Home) {
+            if (backStack.last() is ScreenRoute.Home) {
                 IconButton(
                     modifier = modifier,
                     onClick = {
-                        navController.navigate(ScreenRoute.Debug)
+                        appViewModel.navigateTo(ScreenRoute.Debug)
                     }
                 ) {
                     Icon(
@@ -48,11 +50,11 @@ fun MotoSenseTopBar(
             }
         },
         navigationIcon = {
-            if (currentDestination is ScreenRoute.Debug) {
+            if (backStack.last() is ScreenRoute.Debug) {
                 IconButton(
                     modifier = modifier,
                     onClick = {
-                        navController.popBackStack()
+                        appViewModel.navigateBack()
                     }
                 ) {
                     Icon(
