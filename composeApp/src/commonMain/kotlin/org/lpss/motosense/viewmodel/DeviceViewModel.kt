@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import org.lpss.motosense.module.BluetoothLowEnergyManager
-import org.lpss.motosense.repository.RepositoryError
+import org.lpss.motosense.util.ResultError
 
 class DeviceViewModel(
     private val bluetoothLowEnergyManager: BluetoothLowEnergyManager,
@@ -77,5 +77,5 @@ sealed interface DeviceState {
     object Scanning: DeviceState
     object Ready: DeviceState
     object Running: DeviceState
-    data class Error(val error: RepositoryError): DeviceState
+    data class Error(val error: ResultError): DeviceState
 }

@@ -12,7 +12,7 @@ import android.bluetooth.le.ScanFilter
 import android.bluetooth.le.ScanResult
 import android.bluetooth.le.ScanSettings
 import android.content.Context
-import org.lpss.motosense.repository.RepositoryError
+import org.lpss.motosense.util.ResultError
 import org.lpss.motosense.util.Log
 import org.lpss.motosense.util.Result
 import java.util.UUID
@@ -39,7 +39,7 @@ class AndroidBluetoothLowEnergyManager(
             }
 
             override fun onScanFailed(errorCode: Int) {
-                onScanFinished(Result.Error(RepositoryError.UnknownError("Scan failed with error code: $errorCode")))
+                onScanFinished(Result.Error(ResultError.UnknownError("Scan failed with error code: $errorCode")))
                 Log.e(TAG, "Scan failed with error: $errorCode")
             }
         }

@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import org.lpss.motosense.model.Settings
-import org.lpss.motosense.repository.RepositoryError
+import org.lpss.motosense.util.ResultError
 import org.lpss.motosense.repository.SettingsRepository
 import org.lpss.motosense.ui.navigation.ScreenRoute
 
@@ -133,6 +133,6 @@ sealed interface AppState {
         val settings: Settings
     ): AppState
     data class Error(
-        val error: RepositoryError
+        val error: ResultError
     ): AppState
 }

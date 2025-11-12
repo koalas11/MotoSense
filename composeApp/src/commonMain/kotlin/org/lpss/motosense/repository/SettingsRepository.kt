@@ -5,6 +5,7 @@ import kotlinx.coroutines.flow.Flow
 import org.lpss.motosense.model.Settings
 import org.lpss.motosense.util.Log
 import org.lpss.motosense.util.Result
+import org.lpss.motosense.util.ResultError
 
 interface SettingsRepository {
     fun getSettingsFlow(): Result<Flow<Settings>>
@@ -21,7 +22,7 @@ class SettingsRepositoryImpl(
             Result.Success(settingsDataStore.data)
         } catch (e: Exception) {
             Log.e(TAG, "An unknown error occurred", e)
-            Result.Error(RepositoryError.UnknownError("An unknown error occurred"))
+            Result.Error(ResultError.UnknownError("An unknown error occurred"))
         }
     }
 
@@ -31,7 +32,7 @@ class SettingsRepositoryImpl(
             Result.Success(Unit)
         } catch (e: Exception) {
             Log.e(TAG, "An unknown error occurred", e)
-            Result.Error(RepositoryError.UnknownError("An unknown error occurred"))
+            Result.Error(ResultError.UnknownError("An unknown error occurred"))
         }
     }
 
