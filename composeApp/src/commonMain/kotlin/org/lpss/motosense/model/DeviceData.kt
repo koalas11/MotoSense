@@ -126,9 +126,9 @@ data class DeviceData(
                 throw IllegalArgumentException("Byte array is too short to parse DeviceData")
             }
 
-            byteArray.forEach {
+            val byteArray = byteArray.map {
                 it.inv()
-            }
+            }.toByteArray()
 
             val rollAngle: Short? = if (has(byteArray, OFFSET_ROLL_ANGLE, 9)) {
                 val s = readShortLE(byteArray, OFFSET_ROLL_ANGLE, 9)
