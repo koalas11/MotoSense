@@ -74,9 +74,8 @@ data class DeviceData(
             for (i in 0 until lenBits) {
                 val bitIndex = offsetBits + i
                 val b = byteArray[bitIndex / 8].toInt() and 0xFF
-                // flip bit numbering: MSB (bit 7) is position 0
                 val bit = (b shr (7 - (bitIndex % 8))) and 1
-                result = result or (bit shl i)
+                result = result or (bit shl (lenBits - 1 - i))
             }
 
             // sign‑extend if needed
@@ -93,11 +92,10 @@ data class DeviceData(
             for (i in 0 until magnitudeBits) {
                 val bitIndex = offsetBits + i
                 val b = byteArray[bitIndex / 8].toInt() and 0xFF
-                val bit = (b shr (7 - (bitIndex % 8))) and 1   // <-- flipped order
-                magnitude = magnitude or (bit shl i)
+                val bit = (b shr (7 - (bitIndex % 8))) and 1
+                magnitude = magnitude or (bit shl (magnitudeBits - 1 - i))
             }
 
-            // read the sign bit (the last one)
             val signBitIndex = offsetBits + magnitudeBits
             val b = byteArray[signBitIndex / 8].toInt() and 0xFF
             val signBit = (b shr (7 - (signBitIndex % 8))) and 1
@@ -120,8 +118,6 @@ data class DeviceData(
             Float.fromBits(readIntLE(byteArray, offsetBits))
 
         fun fromByteArray(byteArray: ByteArray): DeviceData {
-            Log.d(TAG, "fromByteArray: Parsing DeviceData from byte array: $byteArray")
-            Log.d(TAG, "fromByteArray: byteArray.size=${byteArray.size} bytes")
             if (byteArray.size * 8 < TOTAL_LENGTH) {
                 Log.d(TAG, "fromByteArray: byte array too short: size=${byteArray.size} bytes")
                 throw IllegalArgumentException("Byte array is too short to parse DeviceData")

@@ -149,6 +149,8 @@ class AndroidBluetoothLowEnergyManager(
                 value: ByteArray
             ) {
                 runCatching {
+                    Log.d(TAG, "fromByteArray: Parsing DeviceData from byte array: ${value.joinToString { it.toString() }}")
+                    Log.d(TAG, "fromByteArray: byteArray.size=${value.size} bytes")
                     onDeviceDataReceived(
                         DeviceData.fromByteArray(value)
                     )
