@@ -120,15 +120,24 @@ data class DeviceData(
         private fun readFloatLE(byteArray: ByteArray, offsetBits: Int): Float =
             Float.fromBits(readIntLE(byteArray, offsetBits))
 
+        private fun reverseBitsInPlace(bytes: ByteArray) {
+            for (i in bytes.indices) {
+                val b = bytes[i].toInt() and 0xFF
+                var rev = 0
+                for (j in 0 until 8) {
+                    rev = (rev shl 1) or ((b shr j) and 1)
+                }
+                bytes[i] = rev.toByte()
+            }
+        }
+
         fun fromByteArray(byteArray: ByteArray): DeviceData {
             if (byteArray.size * 8 < TOTAL_LENGTH) {
                 Log.d(TAG, "fromByteArray: byte array too short: size=${byteArray.size} bytes")
                 throw IllegalArgumentException("Byte array is too short to parse DeviceData")
             }
 
-            val byteArray = byteArray.map {
-                it.inv()
-            }.toByteArray()
+            reverseBitsInPlace(byteArray)
 
             val rollAngle: Short? = if (has(byteArray, OFFSET_ROLL_ANGLE, 9)) {
                 val s = readShortLE(byteArray, OFFSET_ROLL_ANGLE, 9)
