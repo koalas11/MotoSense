@@ -163,7 +163,7 @@ data class DeviceData(
             } else null
 
             val accelerationDirection: Byte? = if (has(byteArray, OFFSET_ACC_DIRECTION, 4)) {
-                val b = readByte(byteArray, OFFSET_ACC_DIRECTION, 4)
+                val b = readByte(byteArray, OFFSET_ACC_DIRECTION, 4, unsigned = true)
                 if (b != ACCELERATION_DIRECTION_NAN) b else null
             } else null
 
