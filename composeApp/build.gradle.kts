@@ -64,6 +64,9 @@ kotlin {
             /* VICO */
             implementation(libs.vico.multiplatform)
             implementation(libs.vico.multiplatform.m3)
+
+            /* DATETIME */
+            implementation(libs.kotlinx.datetime)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)

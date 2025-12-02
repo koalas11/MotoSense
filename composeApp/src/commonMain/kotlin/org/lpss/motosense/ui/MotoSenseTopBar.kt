@@ -34,7 +34,7 @@ fun MotoSenseTopBar(
             )
         },
         actions = {
-            if (backStack.last() is ScreenRoute.Home) {
+            if (backStack.last() !is ScreenRoute.Debug) {
                 IconButton(
                     modifier = modifier,
                     onClick = {

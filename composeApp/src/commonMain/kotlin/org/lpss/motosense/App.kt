@@ -17,7 +17,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.CreationExtras
 import androidx.lifecycle.viewmodel.MutableCreationExtras
 import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
-import org.lpss.motosense.ui.NavHandler
+import org.lpss.motosense.ui.navigation.NavHandler
 import org.lpss.motosense.ui.theme.MotoSenseTheme
 import org.lpss.motosense.viewmodel.AppState
 import org.lpss.motosense.viewmodel.AppViewModel

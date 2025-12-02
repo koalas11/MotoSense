@@ -1,5 +1,6 @@
 package org.lpss.motosense.module
 
+import android.Manifest
 import android.bluetooth.BluetoothDevice
 import android.bluetooth.BluetoothGatt
 import android.bluetooth.BluetoothGattCallback
@@ -12,9 +13,12 @@ import android.bluetooth.le.ScanFilter
 import android.bluetooth.le.ScanResult
 import android.bluetooth.le.ScanSettings
 import android.content.Context
-import org.lpss.motosense.util.ResultError
+import android.os.Build
+import androidx.annotation.RequiresPermission
+import org.lpss.motosense.model.DeviceData
 import org.lpss.motosense.util.Log
 import org.lpss.motosense.util.Result
+import org.lpss.motosense.util.ResultError
 import java.util.UUID
 
 
@@ -25,16 +29,21 @@ class AndroidBluetoothLowEnergyManager(
     private val bluetoothManager: BluetoothManager = context.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
     private val bluetoothAdapter = bluetoothManager.adapter
     private val bluetoothLeScanner = bluetoothAdapter.bluetoothLeScanner
+    private val bluetoothDevices: MutableList<BluetoothDevice> = mutableListOf()
     private var bluetoothDevice: BluetoothDevice? = null
     private var bluetoothGatt: BluetoothGatt? = null
+    private var scanCallback: ScanCallback? = null
 
+    @RequiresPermission(Manifest.permission.BLUETOOTH_SCAN)
     override fun startScanning(
-        onScanFinished: (Result<Unit>) -> Unit,
+        onScanFinished: (Result<String>) -> Unit,
     ) {
-        val scanCallback: ScanCallback = object : ScanCallback() {
+        Log.d(TAG, "Starting BLE Scan, Manager: $bluetoothManager, Adapter: $bluetoothAdapter, Scanner: $bluetoothLeScanner")
+        scanCallback = object : ScanCallback() {
+            @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
             override fun onScanResult(callbackType: Int, result: ScanResult) {
-                bluetoothDevice = result.device
-                onScanFinished(Result.Success(Unit))
+                bluetoothDevices.add(result.device)
+                onScanFinished(Result.Success(result.device.name))
                 Log.d(TAG, "Device found: " + result.device.getName() + " - " + result.device.getAddress())
             }
 
@@ -45,7 +54,7 @@ class AndroidBluetoothLowEnergyManager(
         }
 
         val filter = ScanFilter.Builder()
-            .setDeviceName("MyBLEDevice")
+            .setDeviceName("Portenta-H7")
             .build()
         val filters = listOf(filter)
 
@@ -56,40 +65,58 @@ class AndroidBluetoothLowEnergyManager(
         bluetoothLeScanner.startScan(filters, settings, scanCallback)
     }
 
+    @RequiresPermission(Manifest.permission.BLUETOOTH_SCAN)
     override fun stopScanning() {
-        val scanCallback: ScanCallback = object : ScanCallback() {
-            override fun onScanResult(callbackType: Int, result: ScanResult) {
-                bluetoothDevice = result.device
-                Log.d(TAG, "Device found: " + result.device.getName() + " - " + result.device.getAddress())
-            }
-
-            override fun onScanFailed(errorCode: Int) {
-                Log.e(TAG, "Scan failed with error: $errorCode")
-            }
+        scanCallback?.let { cb ->
+            bluetoothLeScanner?.stopScan(cb)
+            scanCallback = null
+            Log.d(TAG, "BLE Scan stopped")
+        } ?: run {
+            Log.d(TAG, "stopScanning called but scanCallback was null")
         }
-        bluetoothLeScanner.stopScan(scanCallback)
     }
 
-    private fun reset() {
+    @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
+    override fun reset() {
         bluetoothDevice = null
         bluetoothGatt?.close()
         bluetoothGatt = null
     }
 
-    override fun startDataReadings() {
+    @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
+    override fun startDataReadings(
+        deviceName: String,
+        onDeviceDataReceived: (DeviceData) -> Unit,
+    ) {
+        bluetoothDevice = bluetoothDevices.find { it.name == deviceName }
         requireNotNull(bluetoothDevice) { "Bluetooth device is not connected" }
 
         val bluetoothGattCallback = object : BluetoothGattCallback() {
+            @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
             override fun onConnectionStateChange(gatt: BluetoothGatt, status: Int, newState: Int) {
                 if (newState == BluetoothProfile.STATE_CONNECTED) {
-                    Log.d("BLE", "Connected to GATT server. Discovering services...")
-                    gatt.discoverServices()
+                    Log.d(TAG, "Connected to GATT server. Requesting MTU...")
+                    val desiredMtu = 517
+                    val requested = gatt.requestMtu(desiredMtu)
+                    Log.d(TAG, "requestMtu($desiredMtu) initiated: $requested")
                 } else if (newState == BluetoothProfile.STATE_DISCONNECTED) {
                     Log.d("BLE", "Disconnected from GATT server.")
                     gatt.close()
                 }
             }
 
+            @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
+            override fun onMtuChanged(gatt: BluetoothGatt, mtu: Int, status: Int) {
+                Log.d(TAG, "onMtuChanged: mtu=$mtu status=$status")
+                if (status == BluetoothGatt.GATT_SUCCESS) {
+                    Log.d(TAG, "MTU negotiated: $mtu — discovering services...")
+                    gatt.discoverServices()
+                } else {
+                    Log.e(TAG, "MTU request failed (status=$status).")
+                }
+            }
+
+            @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
             override fun onServicesDiscovered(gatt: BluetoothGatt, status: Int) {
                 if (status == BluetoothGatt.GATT_SUCCESS) {
                     val service = gatt.getService(SERVICE_UUID)
@@ -99,7 +126,12 @@ class AndroidBluetoothLowEnergyManager(
                         val success = gatt.setCharacteristicNotification(characteristic, true)
                         if (success) {
                             val descriptor = characteristic.getDescriptor(CLIENT_CHAR_CONFIG)
-                            gatt.writeDescriptor(descriptor, BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE)
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                                gatt.writeDescriptor(descriptor, BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE)
+                            } else {
+                                descriptor.value = BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE
+                                gatt.writeDescriptor(descriptor)
+                            }
                         } else {
                             Log.e("BLE", "Failed to enable notifications")
                         }
@@ -116,7 +148,13 @@ class AndroidBluetoothLowEnergyManager(
                 characteristic: BluetoothGattCharacteristic,
                 value: ByteArray
             ) {
-
+                runCatching {
+                    onDeviceDataReceived(
+                        DeviceData.fromByteArray(value)
+                    )
+                }.onFailure {
+                    Log.e(TAG, "Failed to parse DeviceData from byte array", it)
+                }
             }
         }
 
@@ -124,6 +162,7 @@ class AndroidBluetoothLowEnergyManager(
         bluetoothGatt!!.connect()
     }
 
+    @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
     override fun stopDataReadings() {
         requireNotNull(bluetoothGatt) { "Bluetooth GATT is not connected" }
         bluetoothGatt!!.close()
@@ -131,8 +170,8 @@ class AndroidBluetoothLowEnergyManager(
 
     companion object {
         private const val TAG = "BLE"
-        private val SERVICE_UUID = UUID.fromString("00001234-0000-1000-8000-00805f9b34fb")
-        private val CHARACTERISTIC_UUID = UUID.fromString("00005678-0000-1000-8000-00805f9b34fb")
+        private val SERVICE_UUID = UUID.fromString("19b10000-0001-0000-0000-000000000000")
+        private val CHARACTERISTIC_UUID = UUID.fromString("19b10001-0001-0000-0000-000000000000")
         private val CLIENT_CHAR_CONFIG = UUID.fromString("00002902-0000-1000-8000-00805f9b34fb")
     }
 }

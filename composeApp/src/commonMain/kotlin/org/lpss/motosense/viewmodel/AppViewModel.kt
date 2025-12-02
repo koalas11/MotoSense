@@ -11,9 +11,9 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import org.lpss.motosense.model.Settings
-import org.lpss.motosense.util.ResultError
 import org.lpss.motosense.repository.SettingsRepository
 import org.lpss.motosense.ui.navigation.ScreenRoute
+import org.lpss.motosense.util.ResultError
 
 class AppViewModel(
     private val settingsRepository: SettingsRepository,
@@ -49,34 +49,6 @@ class AppViewModel(
         }
     }
 
-    private var _altitudeValue: MutableStateFlow<Float> = MutableStateFlow(0f)
-    val altitudeValue: StateFlow<Float> = _altitudeValue.asStateFlow()
-
-    private var _leanAngleValue: MutableStateFlow<Float> = MutableStateFlow(0f)
-    val leanAngleValue: StateFlow<Float> = _leanAngleValue.asStateFlow()
-
-    private var _speedValue: MutableStateFlow<Float> = MutableStateFlow(0f)
-    val speedValue: StateFlow<Float> = _speedValue.asStateFlow()
-
-    private var _slopeValue: MutableStateFlow<Float> = MutableStateFlow(0f)
-    val slopeValue: StateFlow<Float> = _slopeValue.asStateFlow()
-
-    fun setAltitude(value: Float) {
-        _altitudeValue.value = value
-    }
-
-    fun setLeanAngle(value: Float) {
-        _leanAngleValue.value = value
-    }
-
-    fun setSpeed(value: Float) {
-        _speedValue.value = value
-    }
-
-    fun setSlope(value: Float) {
-        _slopeValue.value = value
-    }
-
     fun updateSettings(value: Boolean) {
         viewModelScope.launch {
             val settings = Settings(value)
@@ -93,6 +65,10 @@ class AppViewModel(
             val element = tempList.removeAt(existingIndex)
             tempList.add(element)
             _backStack.value = tempList
+        } else {
+            val tempList = _backStack.value.toMutableList()
+            tempList.add(route)
+            _backStack.value = tempList
         }
     }
 
@@ -103,16 +79,6 @@ class AppViewModel(
             tempList.add(ScreenRoute.Home)
         }
         _backStack.value = tempList
-    }
-
-    fun startSimulation() {
-        val steps = arrayOf(-30, -23, -10, 0, 10, 15, 23, 29, 35, 37, 40, 42, 45, 47, 50, 52, 55, 57)
-        viewModelScope.launch {
-            for (i in steps) {
-                setLeanAngle(i.toFloat())
-                kotlinx.coroutines.delay(500)
-            }
-        }
     }
 
     companion object {

@@ -7,5 +7,7 @@ interface ScreenRoute: NavKey {
     @Serializable
     data object Home: ScreenRoute
     @Serializable
+    data object Travel: ScreenRoute
+    @Serializable
     data object Debug: ScreenRoute
 }

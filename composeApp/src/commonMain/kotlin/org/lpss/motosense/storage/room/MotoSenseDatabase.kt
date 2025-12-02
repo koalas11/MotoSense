@@ -2,11 +2,13 @@ package org.lpss.motosense.storage.room
 
 import androidx.room.Database
 import androidx.room.RoomDatabase
+import androidx.room.TypeConverters
 import kotlinx.coroutines.runBlocking
 import org.lpss.motosense.PlatformContext
 import kotlin.concurrent.Volatile
 
 @Database(entities = [Trip::class], version = 1)
+@TypeConverters(Converters::class)
 abstract class MotoSenseDatabase : RoomDatabase() {
     abstract fun tripsDao(): TripsDao
 
