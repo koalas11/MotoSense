@@ -5,6 +5,7 @@ import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toInstant
 import kotlinx.serialization.Serializable
 import org.lpss.motosense.util.Log
+import kotlin.experimental.inv
 import kotlin.math.PI
 import kotlin.math.tan
 import kotlin.time.ExperimentalTime
@@ -74,8 +75,9 @@ data class DeviceData(
             for (i in 0 until lenBits) {
                 val bitIndex = offsetBits + i
                 val b = byteArray[bitIndex / 8].toInt() and 0xFF
+                // flip bit numbering: MSB (bit 7) is position 0
                 val bit = (b shr (7 - (bitIndex % 8))) and 1
-                result = result or (bit shl (lenBits - 1 - i))
+                result = result or (bit shl i)
             }
 
             // sign‑extend if needed
@@ -92,10 +94,11 @@ data class DeviceData(
             for (i in 0 until magnitudeBits) {
                 val bitIndex = offsetBits + i
                 val b = byteArray[bitIndex / 8].toInt() and 0xFF
-                val bit = (b shr (7 - (bitIndex % 8))) and 1
-                magnitude = magnitude or (bit shl (magnitudeBits - 1 - i))
+                val bit = (b shr (7 - (bitIndex % 8))) and 1   // <-- flipped order
+                magnitude = magnitude or (bit shl i)
             }
 
+            // read the sign bit (the last one)
             val signBitIndex = offsetBits + magnitudeBits
             val b = byteArray[signBitIndex / 8].toInt() and 0xFF
             val signBit = (b shr (7 - (signBitIndex % 8))) and 1
@@ -121,6 +124,10 @@ data class DeviceData(
             if (byteArray.size * 8 < TOTAL_LENGTH) {
                 Log.d(TAG, "fromByteArray: byte array too short: size=${byteArray.size} bytes")
                 throw IllegalArgumentException("Byte array is too short to parse DeviceData")
+            }
+
+            byteArray.forEach {
+                it.inv()
             }
 
             val rollAngle: Short? = if (has(byteArray, OFFSET_ROLL_ANGLE, 9)) {
