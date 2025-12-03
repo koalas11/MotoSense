@@ -5,7 +5,6 @@ import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toInstant
 import kotlinx.serialization.Serializable
 import org.lpss.motosense.util.Log
-import kotlin.experimental.inv
 import kotlin.math.PI
 import kotlin.math.tan
 import kotlin.time.ExperimentalTime

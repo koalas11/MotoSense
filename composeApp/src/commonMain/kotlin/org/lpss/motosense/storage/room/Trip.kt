@@ -8,5 +8,6 @@ import org.lpss.motosense.model.DeviceData
 data class Trip(
     @PrimaryKey(autoGenerate = true) val id: Long = 0,
     val title: String,
-    val history: List<DeviceData>
+    val history: List<DeviceData>,
+    val distanceTravelledKm: Double,
 )

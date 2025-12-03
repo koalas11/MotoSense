@@ -2,16 +2,13 @@ package org.lpss.motosense.ui.content
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Bolt
-import androidx.compose.material.icons.outlined.Speed
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -21,7 +18,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
@@ -30,28 +26,24 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import motosense.composeapp.generated.resources.Res
-import motosense.composeapp.generated.resources.turtle
+import motosense.composeapp.generated.resources.road
 import org.jetbrains.compose.resources.painterResource
 import org.lpss.motosense.ui.util.iconMaxHeight
 import org.lpss.motosense.ui.util.iconPadding
 import org.lpss.motosense.ui.util.textAlign
+import org.lpss.motosense.util.roundToDecimals
 import org.lpss.motosense.viewmodel.DeviceViewModel
 
 @Composable
-fun ColumnScope.SpeedContent(
+fun RowScope.DistanceTravelledContent(
     modifier: Modifier = Modifier,
-    deviceViewModel: DeviceViewModel
+    deviceViewModel: DeviceViewModel,
 ) {
-    val speed by deviceViewModel.speedState.collectAsStateWithLifecycle()
-    val icon = when {
-        speed >= 130u -> rememberVectorPainter(Icons.Outlined.Bolt)
-        speed >= 60u -> rememberVectorPainter(Icons.Outlined.Speed)
-        else -> painterResource(Res.drawable.turtle)
-    }
+    val distanceKm by deviceViewModel.distanceKmState.collectAsStateWithLifecycle()
 
     Card(
         modifier = modifier
-            .weight(0.65f)
+            .weight(0.2f)
             .padding(vertical = 8.dp)
             .padding(start = 8.dp, end = 8.dp),
         elevation = CardDefaults.cardElevation(8.dp),
@@ -70,7 +62,7 @@ fun ColumnScope.SpeedContent(
                     .padding(iconPadding)
                     .fillMaxHeight(iconMaxHeight)
                     .aspectRatio(1f),
-                painter = icon,
+                painter = painterResource(Res.drawable.road),
                 contentDescription = null,
                 tint = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.18f)
             )
@@ -84,21 +76,22 @@ fun ColumnScope.SpeedContent(
                         .fillMaxWidth()
                         .padding(start = 8.dp, top = 8.dp)
                         .align(Alignment.Start),
-                    text = "Speed:",
+                    text = "Distance:",
                     style = MaterialTheme.typography.headlineSmall,
                     fontWeight = FontWeight.Bold,
                     textAlign = TextAlign.Start,
                 )
+                val rounded = roundToDecimals(distanceKm, 2)
                 Text(
                     modifier = modifier
                         .fillMaxWidth()
                         .padding(end = 4.dp),
                     text = buildAnnotatedString {
                         withStyle(style = SpanStyle(fontSize = MaterialTheme.typography.headlineMedium.fontSize)) {
-                            append(speed.toString())
+                            append(rounded.toString())
                         }
                         withStyle(style = SpanStyle(fontSize = MaterialTheme.typography.headlineSmall.fontSize)) {
-                            append(" km/h")
+                            append(" km")
                         }
                     },
                     fontWeight = FontWeight.Bold,

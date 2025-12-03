@@ -34,11 +34,11 @@ fun MotoSenseTopBar(
             )
         },
         actions = {
-            if (backStack.last() !is ScreenRoute.Debug) {
+            if (backStack.last() !is ScreenRoute.Settings) {
                 IconButton(
                     modifier = modifier,
                     onClick = {
-                        appViewModel.navigateTo(ScreenRoute.Debug)
+                        appViewModel.navigateTo(ScreenRoute.Settings)
                     }
                 ) {
                     Icon(
@@ -50,7 +50,7 @@ fun MotoSenseTopBar(
             }
         },
         navigationIcon = {
-            if (backStack.last() is ScreenRoute.Debug) {
+            if (backStack.last() is ScreenRoute.Settings) {
                 IconButton(
                     modifier = modifier,
                     onClick = {

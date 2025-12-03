@@ -7,11 +7,11 @@ androidx-activity = "1.12.0"
 androidx-appcompat = "1.7.1"
 androidx-core = "1.17.0"
 androidx-espresso = "3.7.0"
-androidx-lifecycle = "2.10.0-alpha05"
+androidx-lifecycle = "2.10.0-alpha06"
 androidx-testExt = "1.3.0"
-compose-multiplatform = "1.10.0-beta02"
-androidx-window = "1.5.0"
-androidx-savedstate = "1.3.6"
+compose-multiplatform = "1.10.0-rc01"
+androidx-window = "1.5.1"
+androidx-savedstate = "1.4.0"
 junit = "4.13.2"
 kotlin = "2.2.21"
 kotlinx-serialization = "1.9.0"
@@ -19,12 +19,13 @@ material3 = "1.9.0"
 material-icons-extended = "1.7.3"
 room = "2.8.4"
 sqlite = "2.6.2"
-ksp = "2.3.2"
+ksp = "2.3.3"
 datastore = "1.2.0"
 vico = "2.3.6"
 nav3-core = "1.0.0"
-nav3-ui = "1.0.0-alpha05"
+nav3-ui = "1.0.0-alpha06"
 kotlinx-datetime = "0.7.1"
+build-konfig = "0.17.1"
 
 [libraries]
 # Kotlin
@@ -80,3 +81,4 @@ kotlinMultiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref =
 kotlinSerialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin"}
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 room = { id = "androidx.room", version.ref = "room" }
+buildkonfig = { id = "com.codingfeline.buildkonfig", version.ref = "build-konfig" }

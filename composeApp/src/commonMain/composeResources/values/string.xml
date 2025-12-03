@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">MotoSense</string>
+    <string name="enabled">Enabled</string>
+    <string name="disabled">Disabled</string>
+    <string name="light_mode">Light</string>
+    <string name="dark_mode">Dark</string>
+    <string name="system_default">System</string>
+</resources>

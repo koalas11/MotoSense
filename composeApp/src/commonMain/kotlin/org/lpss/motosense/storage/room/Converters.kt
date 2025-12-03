@@ -1,7 +1,6 @@
 package org.lpss.motosense.storage.room
 
 import androidx.room.TypeConverter
-import androidx.room.TypeConverters
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.builtins.ListSerializer
 import kotlinx.serialization.protobuf.ProtoBuf

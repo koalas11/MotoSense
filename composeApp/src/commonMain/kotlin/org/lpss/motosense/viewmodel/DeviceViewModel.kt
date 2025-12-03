@@ -15,6 +15,12 @@ import org.lpss.motosense.repository.TripsRepository
 import org.lpss.motosense.storage.room.Trip
 import org.lpss.motosense.util.Log
 import org.lpss.motosense.util.ResultError
+import kotlin.math.PI
+import kotlin.math.atan2
+import kotlin.math.cos
+import kotlin.math.pow
+import kotlin.math.sin
+import kotlin.math.sqrt
 import kotlin.time.Clock
 import kotlin.time.ExperimentalTime
 
@@ -47,6 +53,35 @@ class DeviceViewModel(
     val longitudeState: StateFlow<Float> = _longitudeMutableState.asStateFlow()
     private var _timestampMutableState: MutableStateFlow<Long> = MutableStateFlow(0L)
     val timestampState: StateFlow<Long> = _timestampMutableState.asStateFlow()
+
+    private var _distanceKmMutableState: MutableStateFlow<Double> = MutableStateFlow(0.0)
+    val distanceKmState: StateFlow<Double> = _distanceKmMutableState.asStateFlow()
+
+    private var oldLat: Double = Double.NaN
+    private var oldLon: Double = Double.NaN
+    private val R = 6371000.0 // Earth radius in meters
+
+    private fun haversine(newLat: Double, newLon: Double): Double {
+        if (oldLat.isNaN() || oldLon.isNaN()) {
+            oldLat = newLat
+            oldLon = newLon
+            return 0.0
+        }
+        val lat1 = oldLat
+        val lon1 = oldLon
+        val dLat = (newLat - lat1) * PI / 180
+        val dLon = (newLon - lon1) * PI / 180
+        val rLat1 = lat1 * PI / 180
+        val rLat2 = newLat * PI / 180
+
+        val a = sin(dLat / 2).pow(2.0) +
+                cos(rLat1) * cos(rLat2) * sin(dLon / 2).pow(2.0)
+        val c = 2 * atan2(sqrt(a), sqrt(1 - a))
+        val distance = R * c
+        oldLat = newLat
+        oldLon = newLon
+        return distance
+    }
 
     fun startScanning() {
         require(_deviceMutableState.value == DeviceState.Idle)
@@ -125,6 +160,15 @@ class DeviceViewModel(
                 it.timestamp ?.let { timestamp ->
                     _timestampMutableState.value = timestamp
                 }
+                if (it.latitude != null && it.longitude != null) {
+                    val distanceIncrement = haversine(
+                        newLat = it.latitude.toDouble(),
+                        newLon = it.longitude.toDouble()
+                    )
+                    if (distanceIncrement > 0) {
+                        _distanceKmMutableState.value += distanceIncrement / 1000.0
+                    }
+                }
             }
             _deviceMutableState.value = DeviceState.Running
         }
@@ -139,7 +183,8 @@ class DeviceViewModel(
             tripsRepository.insertTrip(
                 Trip(
                     title = "Trip at ${Clock.System.now().toEpochMilliseconds()}",
-                    history = tripHistory.toList()
+                    history = tripHistory.toList(),
+                    distanceTravelledKm = _distanceKmMutableState.value,
                 )
             )
             _deviceMutableState.value = DeviceState.Idle

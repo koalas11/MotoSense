@@ -10,7 +10,9 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import org.lpss.motosense.model.DynamicColorMode
 import org.lpss.motosense.model.Settings
+import org.lpss.motosense.model.ThemeMode
 import org.lpss.motosense.repository.SettingsRepository
 import org.lpss.motosense.ui.navigation.ScreenRoute
 import org.lpss.motosense.util.ResultError
@@ -18,14 +20,16 @@ import org.lpss.motosense.util.ResultError
 class AppViewModel(
     private val settingsRepository: SettingsRepository,
 ) : ViewModel() {
-    private var _dynamicThemeMutableStateFlow : MutableStateFlow<Boolean> = MutableStateFlow(false)
-    val dynamicThemeStateFlow: StateFlow<Boolean> = _dynamicThemeMutableStateFlow.asStateFlow()
+    private var _themeSettingsMutableState: MutableStateFlow<Pair<DynamicColorMode, ThemeMode>> = MutableStateFlow(
+        Pair(DynamicColorMode.ENABLED, ThemeMode.SYSTEM_DEFAULT)
+    )
+    val themeSettingsState: StateFlow<Pair<DynamicColorMode, ThemeMode>> = _themeSettingsMutableState.asStateFlow()
 
-    private var _settingsMutableStateFlow: MutableStateFlow<AppState> = MutableStateFlow(AppState.Loading)
-    val settingsStateFlow: StateFlow<AppState> = _settingsMutableStateFlow.asStateFlow()
+    private var _settingsMutableState: MutableStateFlow<AppState> = MutableStateFlow(AppState.Loading)
+    val settingsState: StateFlow<AppState> = _settingsMutableState.asStateFlow()
 
-    private var _backStack: MutableStateFlow<MutableList<ScreenRoute>> =
-        MutableStateFlow(mutableListOf(ScreenRoute.Home))
+    private var _backStack: MutableStateFlow<MutableList<ScreenRoute>> = MutableStateFlow(mutableListOf(
+        ScreenRoute.Home))
     val backStack: StateFlow<List<ScreenRoute>> = _backStack.asStateFlow()
 
     private var _isInitialized = false
@@ -39,46 +43,41 @@ class AppViewModel(
             settingsRepository.getSettingsFlow()
                 .onSuccess { flow ->
                     flow.collect { settings ->
-                        _dynamicThemeMutableStateFlow.value = settings.enableDynamicTheme
-                        _settingsMutableStateFlow.value = AppState.Success(settings)
+                        if (settings.dynamicColorMode != _themeSettingsMutableState.value.first ||
+                            settings.themeMode != _themeSettingsMutableState.value.second
+                        ) {
+                            _themeSettingsMutableState.value =
+                                Pair(settings.dynamicColorMode, settings.themeMode)
+                        }
+                        _settingsMutableState.value = AppState.Success(settings)
                     }
                 }
                 .onError { error ->
-                    _settingsMutableStateFlow.value = AppState.Error(error)
+                    _settingsMutableState.value = AppState.Error(error)
                 }
-        }
-    }
-
-    fun updateSettings(value: Boolean) {
-        viewModelScope.launch {
-            val settings = Settings(value)
-            settingsRepository.updateSettings(settings).onSuccess {
-                _dynamicThemeMutableStateFlow.value = settings.enableDynamicTheme
-            }
         }
     }
 
     fun navigateTo(route: ScreenRoute) {
-        val existingIndex = _backStack.value.indexOf(route)
-        if (existingIndex != -1) {
-            val tempList = _backStack.value.toMutableList()
-            val element = tempList.removeAt(existingIndex)
-            tempList.add(element)
-            _backStack.value = tempList
-        } else {
-            val tempList = _backStack.value.toMutableList()
-            tempList.add(route)
-            _backStack.value = tempList
+        if (_backStack.value.lastOrNull() == route) {
+            return
         }
+        val newBackStack = _backStack.value.toMutableList()
+        val oldIndex = newBackStack.indexOf(route)
+        if (oldIndex != -1) {
+            newBackStack.removeAt(oldIndex)
+        }
+        newBackStack.add(route)
+        _backStack.value = newBackStack
     }
 
     fun navigateBack() {
-        val tempList = _backStack.value.toMutableList()
-        val element = tempList.removeLastOrNull()
-        if (element == null) {
-            tempList.add(ScreenRoute.Home)
+        val newBackStack = _backStack.value.toMutableList()
+        newBackStack.removeLast()
+        if (newBackStack.isEmpty()) {
+            newBackStack.add(ScreenRoute.Home)
         }
-        _backStack.value = tempList
+        _backStack.value = newBackStack
     }
 
     companion object {

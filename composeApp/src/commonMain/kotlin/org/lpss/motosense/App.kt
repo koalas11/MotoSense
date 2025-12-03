@@ -65,7 +65,7 @@ fun Main(
         appViewModel.initialize()
     }
 
-    val settingsState by appViewModel.settingsStateFlow.collectAsStateWithLifecycle()
+    val settingsState by appViewModel.settingsState.collectAsStateWithLifecycle()
 
     when (settingsState) {
         is AppState.Loading -> {

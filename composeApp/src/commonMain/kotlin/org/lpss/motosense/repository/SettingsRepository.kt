@@ -7,10 +7,29 @@ import org.lpss.motosense.util.Log
 import org.lpss.motosense.util.Result
 import org.lpss.motosense.util.ResultError
 
+/**
+ * Repository interface for managing user settings.
+ */
 interface SettingsRepository {
+    /**
+     * Retrieves a flow of user settings.
+     * @return A Result containing a Flow of Settings or an error.
+     */
     fun getSettingsFlow(): Result<Flow<Settings>>
 
+    /**
+     * Updates the user settings.
+     * @param settings The Settings object to update.
+     * @return A Result indicating success or failure.
+     */
     suspend fun updateSettings(settings: Settings): Result<Unit>
+
+    /**
+     * Modifies the user settings using a provided modification function.
+     * @param modify A function that takes the current Settings and returns the modified Settings.
+     * @return A Result indicating success or failure.
+     */
+    suspend fun updateSettings(modify: (Settings) -> Settings): Result<Unit>
 }
 
 class SettingsRepositoryImpl(
@@ -29,6 +48,18 @@ class SettingsRepositoryImpl(
     override suspend fun updateSettings(settings: Settings): Result<Unit> {
         return try {
             settingsDataStore.updateData { settings }
+            Result.Success(Unit)
+        } catch (e: Exception) {
+            Log.e(TAG, "An unknown error occurred", e)
+            Result.Error(ResultError.UnknownError("An unknown error occurred"))
+        }
+    }
+
+    override suspend fun updateSettings(modify: (Settings) -> Settings): Result<Unit> {
+        return try {
+            settingsDataStore.updateData { currentSettings ->
+                modify(currentSettings)
+            }
             Result.Success(Unit)
         } catch (e: Exception) {
             Log.e(TAG, "An unknown error occurred", e)

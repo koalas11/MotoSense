@@ -4,5 +4,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class Settings(
-    var enableDynamicTheme: Boolean = true,
+    val dynamicColorMode: DynamicColorMode = DynamicColorMode.ENABLED,
+    val themeMode: ThemeMode = ThemeMode.SYSTEM_DEFAULT,
+    val motorcycleIcon: MotorcycleIcon = MotorcycleIcon.DEFAULT,
 )

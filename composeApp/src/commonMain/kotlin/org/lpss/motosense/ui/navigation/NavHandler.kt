@@ -14,9 +14,9 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.ui.NavDisplay
-import org.lpss.motosense.ui.DebugScreen
 import org.lpss.motosense.ui.HomeScreen
 import org.lpss.motosense.ui.MotoSenseTopBar
+import org.lpss.motosense.ui.SettingsScreen
 import org.lpss.motosense.ui.TravelScreen
 import org.lpss.motosense.viewmodel.AppViewModel
 import org.lpss.motosense.viewmodel.DeviceState
@@ -31,18 +31,19 @@ fun NavHandler(
     deviceViewModel: DeviceViewModel = motoSenseViewModel(factory = DeviceViewModel.Factory)
 ) {
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
-
+    val backStack by appViewModel.backStack.collectAsStateWithLifecycle()
     Scaffold(
         modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
-            MotoSenseTopBar(
-                modifier = modifier,
-                appViewModel = appViewModel,
-                scrollBehavior = scrollBehavior,
-            )
+            if (backStack.last() !is ScreenRoute.Travel) {
+                MotoSenseTopBar(
+                    modifier = modifier,
+                    appViewModel = appViewModel,
+                    scrollBehavior = scrollBehavior,
+                )
+            }
         },
     ) { paddingValues ->
-        val backStack by appViewModel.backStack.collectAsStateWithLifecycle()
         val deviceUiState by deviceViewModel.deviceState.collectAsStateWithLifecycle()
         LaunchedEffect(deviceUiState) {
             if (deviceUiState is DeviceState.Running && backStack.last() !is ScreenRoute.Travel) {
@@ -77,9 +78,10 @@ fun NavHandler(
                     )
                 }
 
-                entry<ScreenRoute.Debug> {
-                    DebugScreen(
+                entry<ScreenRoute.Settings> {
+                    SettingsScreen(
                         modifier = modifier,
+                        appViewModel = appViewModel,
                     )
                 }
             }

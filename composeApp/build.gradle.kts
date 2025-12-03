@@ -1,4 +1,6 @@
+import com.codingfeline.buildkonfig.compiler.FieldSpec.Type.BOOLEAN
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import java.util.Properties
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
@@ -8,6 +10,7 @@ plugins {
 	alias(libs.plugins.kotlinSerialization)
     alias(libs.plugins.ksp)
     alias(libs.plugins.room)
+    alias(libs.plugins.buildkonfig)
 }
 
 kotlin {
@@ -120,3 +123,29 @@ dependencies {
     add("kspIosSimulatorArm64", libs.androidx.room.compiler)
     add("kspIosArm64", libs.androidx.room.compiler)
 }
+
+buildkonfig {
+    packageName = "org.lpss.motosense"
+    objectName = "MotoSenseBuildConfig"
+
+    defaultConfigs {
+        buildConfigField(
+            BOOLEAN,
+            "DEBUG_MODE",
+            if (project.hasProperty("release")) "false" else "true"
+        )
+        val lp = rootProject.file("local.properties")
+        val useMockDataFromProp: Boolean =
+            if (lp.exists()) {
+                Properties().apply { load(lp.inputStream()) }
+                    .getProperty("useMockData")?.toBoolean() ?: false
+            } else false
+
+        buildConfigField(
+            BOOLEAN,
+            "USE_MOCK_DATA",
+            if (useMockDataFromProp) "true" else "false"
+        )
+    }
+}
+
