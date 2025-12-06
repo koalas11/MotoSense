@@ -85,14 +85,6 @@ class DeviceViewModel(
         return distance
     }
 
-    fun distanceBySpeedTimeAndAcceleration(
-        speedMps: Double,
-        timeSeconds: Double,
-        accelerationMps2: Double
-    ): Double {
-        return (speedMps * timeSeconds) + (0.5 * accelerationMps2 * timeSeconds * timeSeconds)
-    }
-
     fun startScanning() {
         require(_deviceMutableState.value == DeviceState.Idle)
         _deviceMutableState.value = DeviceState.Scanning
@@ -162,18 +154,17 @@ class DeviceViewModel(
                 }
 
                 if (it.pitchAngle != null && it.speed != null && it.perceivedAcceleration != null && it.accelerationDirection != null && it.timestamp != null) {
-                    val directionAngleRad = it.accelerationDirection.toInt() * 45.0 * PI / 180.0
-                    val accelerationMps2 = it.perceivedAcceleration.toDouble() * cos(
-                        directionAngleRad
-                    )
-                    val gravityForce = 9.80665 * sin(it.pitchAngle.toDouble() * PI / 180.0)
-                    val realAcc = if (it.pitchAngle >= 0.0) {
-                        // Uphill
-                        accelerationMps2 - gravityForce
-                    } else {
-                        // Downhill
-                        accelerationMps2 + gravityForce
-                    }
+                    val g = 9.80665
+                    val accG = it.perceivedAcceleration.toDouble()
+                    val accMps2 = accG * g
+
+                    val directionRad = it.accelerationDirection.toInt() * 45.0 * PI / 180.0
+                    val accAlongHeading = accMps2 * cos(directionRad)
+
+                    val pitchRad = it.pitchAngle.toDouble() * PI / 180.0
+                    val gravityAlongHeading = g * sin(pitchRad)
+
+                    val realAcc = accAlongHeading - gravityAlongHeading
                     if (tripHistory.size >= 2) {
                         val prev = tripHistory[tripHistory.size - 2]
                         val previousTimestamp = prev.timestamp ?: it.timestamp
