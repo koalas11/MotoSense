@@ -179,8 +179,8 @@ class DeviceViewModel(
                         val previousTimestamp = prev.timestamp ?: it.timestamp
                         val timeSeconds = (it.timestamp - previousTimestamp).toDouble() / 1000.0
 
-                        val prevSpeedMps = prev.speed?.toDouble() ?: it.speed.toDouble()
-                        val currSpeedMps = it.speed.toDouble()
+                        val prevSpeedMps = (prev.speed?.toDouble() ?: it.speed.toDouble()) / 3.6
+                        val currSpeedMps = it.speed.toDouble() / 3.6
                         val avgSpeed = (prevSpeedMps + currSpeedMps) / 2.0
 
                         val distanceIncrement = (avgSpeed * timeSeconds) + (0.5 * realAcc * timeSeconds * timeSeconds)
