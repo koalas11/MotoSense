@@ -129,7 +129,9 @@ class AndroidBluetoothLowEnergyManager(
                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                                 gatt.writeDescriptor(descriptor, BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE)
                             } else {
+                                @Suppress("DEPRECATION")
                                 descriptor.value = BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE
+                                @Suppress("DEPRECATION")
                                 gatt.writeDescriptor(descriptor)
                             }
                         } else {

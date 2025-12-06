@@ -49,7 +49,7 @@ data class DeviceData(
         const val PERCEIVED_ACC_NAN: Float = 16f
         const val ACCELERATION_DIRECTION_NAN: Byte = 16
         const val ALTITUDE_NAN: Short = 8191
-        const val SPEED_NAN: UShort = 511u
+        const val SPEED_NAN: UShort = 512u
         const val LATITUDE_NAN = 200f
         const val LONGITUDE_NAN = 200f
         const val HOUR_NAN: Byte = 31

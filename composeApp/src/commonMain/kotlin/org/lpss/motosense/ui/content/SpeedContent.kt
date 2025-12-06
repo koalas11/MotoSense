@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Bolt
+import androidx.compose.material.icons.outlined.DownhillSkiing
 import androidx.compose.material.icons.outlined.Speed
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -43,10 +44,15 @@ fun ColumnScope.SpeedContent(
     deviceViewModel: DeviceViewModel
 ) {
     val speed by deviceViewModel.speedState.collectAsStateWithLifecycle()
-    val icon = when {
-        speed >= 130u -> rememberVectorPainter(Icons.Outlined.Bolt)
-        speed >= 60u -> rememberVectorPainter(Icons.Outlined.Speed)
-        else -> painterResource(Res.drawable.turtle)
+
+    val icon = if (speed != null) {
+        when {
+            speed!! >= 130u -> rememberVectorPainter(Icons.Outlined.Bolt)
+            speed!! >= 60u -> rememberVectorPainter(Icons.Outlined.Speed)
+            else -> painterResource(Res.drawable.turtle)
+        }
+    } else {
+        rememberVectorPainter(Icons.Outlined.DownhillSkiing)
     }
 
     Card(
@@ -95,7 +101,7 @@ fun ColumnScope.SpeedContent(
                         .padding(end = 4.dp),
                     text = buildAnnotatedString {
                         withStyle(style = SpanStyle(fontSize = MaterialTheme.typography.headlineMedium.fontSize)) {
-                            append(speed.toString())
+                            append(speed?.toString() ?: "-")
                         }
                         withStyle(style = SpanStyle(fontSize = MaterialTheme.typography.headlineSmall.fontSize)) {
                             append(" km/h")

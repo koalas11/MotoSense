@@ -20,13 +20,27 @@ import org.lpss.motosense.util.roundToDecimals
 @Composable
 fun F1GForceRingsComposable(
     modifier: Modifier = Modifier,
-    activeRing: Int = -1,
-    gForceValue: Float = 0f,
+    activeRing: Int? = -1,
+    gForceValue: Float? = 0f,
 ) {
     val textMeasurer = rememberTextMeasurer(0)
     val segmentCount = 8
-    val ringColors = List(segmentCount) { index ->
-        if (index == activeRing) MaterialTheme.colorScheme.tertiary else MaterialTheme.colorScheme.onTertiary
+
+    val outRingColors = gForceValue?.let {
+        if (it >= 1.0f ) {
+            List(segmentCount) { index ->
+                if (index == activeRing) MaterialTheme.colorScheme.tertiary else MaterialTheme.colorScheme.onTertiary
+            }
+        } else {
+            List(segmentCount) {
+                MaterialTheme.colorScheme.onTertiary
+            }
+        }
+    } ?: List(segmentCount) {
+        MaterialTheme.colorScheme.onTertiary
+    }
+    val middleRingColors = List(segmentCount) { index ->
+        if (index == activeRing) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onPrimary
     }
     val outLinesColor = MaterialTheme.colorScheme.onBackground
     val middleCircleColor = MaterialTheme.colorScheme.background
@@ -45,8 +59,8 @@ fun F1GForceRingsComposable(
 
         for (i in 0 until segmentCount) {
             drawArc(
-                color = ringColors[i],
-                startAngle = i * sweepAngle + 22.5f,
+                color = outRingColors[i],
+                startAngle = i * sweepAngle - 112.5f,
                 sweepAngle = sweepAngle,
                 useCenter = false,
                 topLeft = Offset(center.x - outerRadius, center.y - outerRadius),
@@ -60,8 +74,8 @@ fun F1GForceRingsComposable(
         val middleRadius = outerRadius - outerStroke / 2 - middleStroke / 2
         for (i in 0 until segmentCount) {
             drawArc(
-                color = ringColors[i],
-                startAngle = i * sweepAngle + 22.5f,
+                color = middleRingColors[i],
+                startAngle = i * sweepAngle - 112.5f,
                 sweepAngle = sweepAngle,
                 useCenter = false,
                 topLeft = Offset(center.x - middleRadius, center.y - middleRadius),
@@ -87,8 +101,13 @@ fun F1GForceRingsComposable(
         )
 
         // Center Text
-        val rounded = roundToDecimals(gForceValue.toDouble(), 1)
-        val text = "$rounded g"
+        val text = if (gForceValue != null) {
+            val rounded = roundToDecimals(gForceValue.toDouble(), 1)
+            "$rounded g"
+        } else {
+            "- g"
+        }
+
         drawText(
             textMeasurer = textMeasurer,
             text = text,
@@ -117,7 +136,7 @@ fun F1GForceRingsComposable(
 
         // Radial dividers
         for (i in 0 until segmentCount) {
-            val angleRad = (i * sweepAngle  + 22.5f).toDouble() * (kotlin.math.PI / 180.0)
+            val angleRad = (i * sweepAngle - 112.5f).toDouble() * (kotlin.math.PI / 180.0)
             val xOuter = center.x + (outerRadius + outerStroke / 2) * kotlin.math.cos(angleRad).toFloat()
             val yOuter = center.y + (outerRadius + outerStroke / 2) * kotlin.math.sin(angleRad).toFloat()
 
@@ -144,7 +163,7 @@ fun F1GForceRingsComposableWithDividersPreview() {
         verticalArrangement = androidx.compose.foundation.layout.Arrangement.Center
     ) {
         F1GForceRingsComposable(
-            activeRing = 3,
+            activeRing = 0,
             gForceValue = 1.76f,
         )
     }

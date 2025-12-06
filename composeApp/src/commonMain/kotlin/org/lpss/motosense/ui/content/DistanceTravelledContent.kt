@@ -40,10 +40,11 @@ fun RowScope.DistanceTravelledContent(
     deviceViewModel: DeviceViewModel,
 ) {
     val distanceKm by deviceViewModel.distanceKmState.collectAsStateWithLifecycle()
+    val distanceKmGps by deviceViewModel.distanceKmGpsState.collectAsStateWithLifecycle()
 
     Card(
         modifier = modifier
-            .weight(0.2f)
+            .weight(0.25f)
             .padding(vertical = 8.dp)
             .padding(start = 8.dp, end = 8.dp),
         elevation = CardDefaults.cardElevation(8.dp),
@@ -89,6 +90,22 @@ fun RowScope.DistanceTravelledContent(
                     text = buildAnnotatedString {
                         withStyle(style = SpanStyle(fontSize = MaterialTheme.typography.headlineMedium.fontSize)) {
                             append(rounded.toString())
+                        }
+                        withStyle(style = SpanStyle(fontSize = MaterialTheme.typography.headlineSmall.fontSize)) {
+                            append(" km")
+                        }
+                    },
+                    fontWeight = FontWeight.Bold,
+                    textAlign = textAlign,
+                )
+                val roundedGps = roundToDecimals(distanceKmGps, 2)
+                Text(
+                    modifier = modifier
+                        .fillMaxWidth()
+                        .padding(end = 4.dp),
+                    text = buildAnnotatedString {
+                        withStyle(style = SpanStyle(fontSize = MaterialTheme.typography.headlineMedium.fontSize)) {
+                            append(roundedGps.toString())
                         }
                         withStyle(style = SpanStyle(fontSize = MaterialTheme.typography.headlineSmall.fontSize)) {
                             append(" km")

@@ -44,13 +44,18 @@ fun RowScope.SlopeContent(
 ) {
     val slope by deviceViewModel.slopeAngleState.collectAsStateWithLifecycle()
 
-    val icon = when {
-        slope >= 0.0f -> painterResource(Res.drawable.elevation)
-        else -> rememberVectorPainter(Icons.Outlined.DownhillSkiing)
+    val icon = if (slope != null) {
+        when {
+            slope!! >= 0.0f -> painterResource(Res.drawable.elevation)
+            else -> rememberVectorPainter(Icons.Outlined.DownhillSkiing)
+        }
+    } else {
+        rememberVectorPainter(Icons.Outlined.DownhillSkiing)
     }
+
     Card(
         modifier = modifier
-            .weight(0.2f)
+            .weight(0.25f)
             .padding(vertical = 8.dp)
             .padding(start = 8.dp, end = 8.dp),
         elevation = CardDefaults.cardElevation(8.dp),
@@ -88,14 +93,18 @@ fun RowScope.SlopeContent(
                     fontWeight = FontWeight.Bold,
                     textAlign = TextAlign.Start,
                 )
-                val rounded = roundToDecimals(slope, 1)
+                val rounded = if (slope != null) {
+                    roundToDecimals(slope!!, 1).toString()
+                } else {
+                    "-"
+                }
                 Text(
                     modifier = modifier
                         .fillMaxWidth()
                         .padding(end = 4.dp),
                     text = buildAnnotatedString {
                         withStyle(style = SpanStyle(fontSize = MaterialTheme.typography.headlineMedium.fontSize)) {
-                            append(rounded.toString())
+                            append(rounded)
                         }
                         withStyle(style = SpanStyle(fontSize = MaterialTheme.typography.headlineSmall.fontSize)) {
                             append(" %")

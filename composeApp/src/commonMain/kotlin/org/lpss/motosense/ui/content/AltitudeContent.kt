@@ -41,10 +41,15 @@ fun ColumnScope.AltitudeContent(
 ) {
     val altitude by deviceViewModel.altitudeState.collectAsStateWithLifecycle()
 
-    val icon = when {
-        altitude >= 2500 -> Icons.Outlined.AirplanemodeActive
-        altitude >= 300 -> Icons.Outlined.Crop
-        else -> Icons.Outlined.LocationCity
+
+    val icon = if (altitude != null) {
+        when {
+            altitude!! >= 2500 -> Icons.Outlined.AirplanemodeActive
+            altitude!! >= 300 -> Icons.Outlined.Crop
+            else -> Icons.Outlined.LocationCity
+        }
+    } else {
+        Icons.Outlined.LocationCity
     }
 
     Card(
@@ -93,7 +98,7 @@ fun ColumnScope.AltitudeContent(
                         .padding(end = 4.dp),
                     text = buildAnnotatedString {
                         withStyle(style = SpanStyle(fontSize = MaterialTheme.typography.headlineMedium.fontSize)) {
-                            append(altitude.toString())
+                            append(altitude?.toString() ?: "-")
                         }
                         withStyle(style = SpanStyle(fontSize = MaterialTheme.typography.headlineSmall.fontSize)) {
                             append(" m")

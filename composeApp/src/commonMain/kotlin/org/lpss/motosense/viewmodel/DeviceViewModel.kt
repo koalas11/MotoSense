@@ -33,32 +33,34 @@ class DeviceViewModel(
 
     private val tripHistory: MutableList<DeviceData> = mutableListOf()
 
-    private var _rollAngleMutableState: MutableStateFlow<Short> = MutableStateFlow(0)
-    val rollAngleState: StateFlow<Short> = _rollAngleMutableState.asStateFlow()
-    private var _pitchAngleMutableState: MutableStateFlow<Short> = MutableStateFlow(0)
-    val pitchAngleState: StateFlow<Short> = _pitchAngleMutableState.asStateFlow()
-    private var _slopeAngleMutableState: MutableStateFlow<Double> = MutableStateFlow(0.0)
-    val slopeAngleState: StateFlow<Double> = _slopeAngleMutableState.asStateFlow()
-    private var _perceivedAccelerationMutableState: MutableStateFlow<Float> = MutableStateFlow(0f)
-    val perceivedAccelerationState: StateFlow<Float> = _perceivedAccelerationMutableState.asStateFlow()
-    private var _accelerationDirectionMutableState: MutableStateFlow<Byte> = MutableStateFlow(0)
-    val accelerationDirectionState: StateFlow<Byte> = _accelerationDirectionMutableState.asStateFlow()
-    private var _altitudeMutableState: MutableStateFlow<Short> = MutableStateFlow(0)
-    val altitudeState: StateFlow<Short> = _altitudeMutableState.asStateFlow()
-    private var _speedMutableState: MutableStateFlow<UShort> = MutableStateFlow(0u)
-    val speedState: StateFlow<UShort> = _speedMutableState.asStateFlow()
-    private var _latitudeMutableState: MutableStateFlow<Float> = MutableStateFlow(0f)
-    val latitudeState: StateFlow<Float> = _latitudeMutableState.asStateFlow()
-    private var _longitudeMutableState: MutableStateFlow<Float> = MutableStateFlow(0f)
-    val longitudeState: StateFlow<Float> = _longitudeMutableState.asStateFlow()
-    private var _timestampMutableState: MutableStateFlow<Long> = MutableStateFlow(0L)
-    val timestampState: StateFlow<Long> = _timestampMutableState.asStateFlow()
+    private var _rollAngleMutableState: MutableStateFlow<Short?> = MutableStateFlow(0)
+    val rollAngleState: StateFlow<Short?> = _rollAngleMutableState.asStateFlow()
+    private var _pitchAngleMutableState: MutableStateFlow<Short?> = MutableStateFlow(0)
+    val pitchAngleState: StateFlow<Short?> = _pitchAngleMutableState.asStateFlow()
+    private var _slopeAngleMutableState: MutableStateFlow<Double?> = MutableStateFlow(0.0)
+    val slopeAngleState: StateFlow<Double?> = _slopeAngleMutableState.asStateFlow()
+    private var _perceivedAccelerationMutableState: MutableStateFlow<Float?> = MutableStateFlow(0f)
+    val perceivedAccelerationState: StateFlow<Float?> = _perceivedAccelerationMutableState.asStateFlow()
+    private var _accelerationDirectionMutableState: MutableStateFlow<Byte?> = MutableStateFlow(0)
+    val accelerationDirectionState: StateFlow<Byte?> = _accelerationDirectionMutableState.asStateFlow()
+    private var _altitudeMutableState: MutableStateFlow<Short?> = MutableStateFlow(0)
+    val altitudeState: StateFlow<Short?> = _altitudeMutableState.asStateFlow()
+    private var _speedMutableState: MutableStateFlow<UShort?> = MutableStateFlow(0u)
+    val speedState: StateFlow<UShort?> = _speedMutableState.asStateFlow()
+    private var _latitudeMutableState: MutableStateFlow<Float?> = MutableStateFlow(0f)
+    val latitudeState: StateFlow<Float?> = _latitudeMutableState.asStateFlow()
+    private var _longitudeMutableState: MutableStateFlow<Float?> = MutableStateFlow(0f)
+    val longitudeState: StateFlow<Float?> = _longitudeMutableState.asStateFlow()
+    private var _timestampMutableState: MutableStateFlow<Long?> = MutableStateFlow(0L)
+    val timestampState: StateFlow<Long?> = _timestampMutableState.asStateFlow()
 
+    private var _distanceKmGpsMutableState: MutableStateFlow<Double> = MutableStateFlow(0.0)
+    val distanceKmGpsState: StateFlow<Double> = _distanceKmGpsMutableState.asStateFlow()
     private var _distanceKmMutableState: MutableStateFlow<Double> = MutableStateFlow(0.0)
     val distanceKmState: StateFlow<Double> = _distanceKmMutableState.asStateFlow()
 
-    private var oldLat: Double = Double.NaN
-    private var oldLon: Double = Double.NaN
+    private var oldLat = Double.NaN
+    private var oldLon = Double.NaN
     private val R = 6371000.0 // Earth radius in meters
 
     private fun haversine(newLat: Double, newLon: Double): Double {
@@ -81,6 +83,14 @@ class DeviceViewModel(
         oldLat = newLat
         oldLon = newLon
         return distance
+    }
+
+    fun distanceBySpeedTimeAndAcceleration(
+        speedMps: Double,
+        timeSeconds: Double,
+        accelerationMps2: Double
+    ): Double {
+        return (speedMps * timeSeconds) + (0.5 * accelerationMps2 * timeSeconds * timeSeconds)
     }
 
     fun startScanning() {
@@ -130,43 +140,53 @@ class DeviceViewModel(
             bluetoothLowEnergyManager.startDataReadings(deviceName) {
                 Log.d("DeviceViewModel", "Data Reading Callback: $it")
                 tripHistory.add(it)
-                it.rollAngle ?.let { rollAngle ->
-                    _rollAngleMutableState.value = rollAngle
-                }
-                it.pitchAngle ?.let { pitchAngle ->
-                    _pitchAngleMutableState.value = pitchAngle
-                }
-                it.slopeAngle ?.let { slopeAngle ->
-                    _slopeAngleMutableState.value = slopeAngle
-                }
-                it.perceivedAcceleration ?.let { perceivedAcceleration ->
-                    _perceivedAccelerationMutableState.value = perceivedAcceleration
-                }
-                it.accelerationDirection ?.let { accelerationDirection ->
-                    _accelerationDirectionMutableState.value = accelerationDirection
-                }
-                it.altitude ?.let { altitude ->
-                    _altitudeMutableState.value = altitude
-                }
-                it.speed ?.let { speed ->
-                    _speedMutableState.value = speed
-                }
-                it.latitude ?.let { latitude ->
-                    _latitudeMutableState.value = latitude
-                }
-                it.longitude ?.let { longitude ->
-                    _longitudeMutableState.value = longitude
-                }
-                it.timestamp ?.let { timestamp ->
-                    _timestampMutableState.value = timestamp
-                }
+                _rollAngleMutableState.value = it.rollAngle
+                _pitchAngleMutableState.value = it.pitchAngle
+                _slopeAngleMutableState.value = it.slopeAngle
+                _perceivedAccelerationMutableState.value = it.perceivedAcceleration
+                _accelerationDirectionMutableState.value = it.accelerationDirection
+                _altitudeMutableState.value = it.altitude
+                _speedMutableState.value = it.speed
+                _latitudeMutableState.value = it.latitude
+                _longitudeMutableState.value = it.longitude
+                _timestampMutableState.value = it.timestamp
+
                 if (it.latitude != null && it.longitude != null) {
                     val distanceIncrement = haversine(
                         newLat = it.latitude.toDouble(),
                         newLon = it.longitude.toDouble()
                     )
                     if (distanceIncrement > 0) {
-                        _distanceKmMutableState.value += distanceIncrement / 1000.0
+                        _distanceKmGpsMutableState.value += distanceIncrement / 1000.0
+                    }
+                }
+
+                if (it.pitchAngle != null && it.speed != null && it.perceivedAcceleration != null && it.accelerationDirection != null && it.timestamp != null) {
+                    val directionAngleRad = it.accelerationDirection.toInt() * 45.0 * PI / 180.0
+                    val accelerationMps2 = it.perceivedAcceleration.toDouble() * cos(
+                        directionAngleRad
+                    )
+                    val gravityForce = 9.80665 * sin(it.pitchAngle.toDouble() * PI / 180.0)
+                    val realAcc = if (it.pitchAngle >= 0.0) {
+                        // Uphill
+                        accelerationMps2 - gravityForce
+                    } else {
+                        // Downhill
+                        accelerationMps2 + gravityForce
+                    }
+                    if (tripHistory.size >= 2) {
+                        val prev = tripHistory[tripHistory.size - 2]
+                        val previousTimestamp = prev.timestamp ?: it.timestamp
+                        val timeSeconds = (it.timestamp - previousTimestamp).toDouble() / 1000.0
+
+                        val prevSpeedMps = prev.speed?.toDouble() ?: it.speed.toDouble()
+                        val currSpeedMps = it.speed.toDouble()
+                        val avgSpeed = (prevSpeedMps + currSpeedMps) / 2.0
+
+                        val distanceIncrement = (avgSpeed * timeSeconds) + (0.5 * realAcc * timeSeconds * timeSeconds)
+                        if (distanceIncrement > 0) {
+                            _distanceKmMutableState.value += distanceIncrement / 1000.0
+                        }
                     }
                 }
             }

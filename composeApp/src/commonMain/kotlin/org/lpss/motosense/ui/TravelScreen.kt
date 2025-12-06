@@ -74,7 +74,7 @@ fun TravelScreen(
         ) {
             Column(
                 modifier = modifier
-                    .weight(0.2f)
+                    .weight(0.25f)
                     .wrapContentHeight(),
             ) {
                 AltitudeContent(
@@ -88,7 +88,7 @@ fun TravelScreen(
             }
             Box(
                 modifier = modifier
-                    .weight(0.6f)
+                    .weight(0.5f)
                     .fillMaxHeight(),
                 contentAlignment = Alignment.Center,
             ) {
@@ -96,13 +96,13 @@ fun TravelScreen(
                 val accelerationDirection by deviceViewModel.accelerationDirectionState.collectAsStateWithLifecycle()
 
                 F1GForceRingsComposable(
-                    activeRing = accelerationDirection.toInt(),
+                    activeRing = accelerationDirection?.toInt(),
                     gForceValue = perceivedAcceleration,
                 )
             }
             Column(
                 modifier = modifier
-                    .weight(0.2f),
+                    .weight(0.25f),
             ) {
                 SpeedContent(
                     modifier = modifier,
@@ -146,7 +146,7 @@ fun TravelScreen(
             )
             Box(
                 modifier = modifier
-                    .weight(0.6f)
+                    .weight(0.5f)
                     .fillMaxHeight(),
                 contentAlignment = Alignment.Center,
             ) {

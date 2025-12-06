@@ -25,6 +25,7 @@ import org.jetbrains.compose.resources.painterResource
 import org.lpss.motosense.viewmodel.AppState
 import org.lpss.motosense.viewmodel.AppViewModel
 import org.lpss.motosense.viewmodel.DeviceViewModel
+import kotlin.math.abs
 
 @Composable
 fun MotorcycleLeanAnimation(
@@ -37,7 +38,7 @@ fun MotorcycleLeanAnimation(
     val settings = (settingsState as AppState.Success).settings
     val imageVector = painterResource(settings.motorcycleIcon.icon)
     val animatedAngle by animateFloatAsState(
-        targetValue = rollAngle.toFloat(),
+        targetValue = rollAngle?.toFloat() ?: 0.0f,
         animationSpec = tween()
     )
     Box(
@@ -64,7 +65,7 @@ fun MotorcycleLeanAnimation(
                 .align(Alignment.CenterEnd)
                 .fillMaxWidth(),
             textAlign = TextAlign.End,
-            text = "$rollAngle°",
+            text = "${rollAngle?.toInt()?.let { abs(it) } ?: "-"}°",
             style = MaterialTheme.typography.headlineMedium,
             fontWeight = FontWeight.Bold,
         )
