@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -22,6 +21,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import org.jetbrains.compose.resources.painterResource
+import org.lpss.motosense.LocalContentTextStyle
 import org.lpss.motosense.viewmodel.AppState
 import org.lpss.motosense.viewmodel.AppViewModel
 import org.lpss.motosense.viewmodel.DeviceViewModel
@@ -61,12 +61,12 @@ fun MotorcycleLeanAnimation(
         )
         Text(
             modifier = modifier
-                .padding(end = 32.dp)
+                .padding(end = 36.dp)
                 .align(Alignment.CenterEnd)
                 .fillMaxWidth(),
             textAlign = TextAlign.End,
             text = "${rollAngle?.toInt()?.let { abs(it) } ?: "-"}°",
-            style = MaterialTheme.typography.headlineMedium,
+            style = LocalContentTextStyle.current,
             fontWeight = FontWeight.Bold,
         )
     }

@@ -1,6 +1,7 @@
 package org.lpss.motosense.ui.content
 
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
@@ -44,7 +45,7 @@ fun F1GForceRingsComposable(
     }
     val outLinesColor = MaterialTheme.colorScheme.onBackground
     val middleCircleColor = MaterialTheme.colorScheme.background
-    val textStyle = MaterialTheme.typography.headlineSmall.copy(
+    val textStyle = MaterialTheme.typography.headlineMedium.copy(
         color = MaterialTheme.colorScheme.onBackground,
     )
     Canvas(modifier = modifier.fillMaxSize()) {
@@ -160,7 +161,7 @@ fun F1GForceRingsComposableWithDividersPreview() {
         modifier = Modifier
             .size(600.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = androidx.compose.foundation.layout.Arrangement.Center
+        verticalArrangement = Arrangement.Center
     ) {
         F1GForceRingsComposable(
             activeRing = 0,

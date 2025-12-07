@@ -86,7 +86,7 @@ fun RowScope.DistanceTravelledContent(
                 Text(
                     modifier = modifier
                         .fillMaxWidth()
-                        .padding(end = 4.dp),
+                        .padding(end = 12.dp),
                     text = buildAnnotatedString {
                         withStyle(style = SpanStyle(fontSize = MaterialTheme.typography.headlineMedium.fontSize)) {
                             append(rounded.toString())
@@ -102,7 +102,7 @@ fun RowScope.DistanceTravelledContent(
                 Text(
                     modifier = modifier
                         .fillMaxWidth()
-                        .padding(end = 4.dp),
+                        .padding(end = 12.dp),
                     text = buildAnnotatedString {
                         withStyle(style = SpanStyle(fontSize = MaterialTheme.typography.headlineMedium.fontSize)) {
                             append(roundedGps.toString())

@@ -34,13 +34,13 @@ class AndroidBluetoothLowEnergyManager(
     private var bluetoothGatt: BluetoothGatt? = null
     private var scanCallback: ScanCallback? = null
 
-    @RequiresPermission(Manifest.permission.BLUETOOTH_SCAN)
+    @RequiresPermission(anyOf = [Manifest.permission.BLUETOOTH_SCAN, Manifest.permission.ACCESS_FINE_LOCATION])
     override fun startScanning(
         onScanFinished: (Result<String>) -> Unit,
     ) {
         Log.d(TAG, "Starting BLE Scan, Manager: $bluetoothManager, Adapter: $bluetoothAdapter, Scanner: $bluetoothLeScanner")
         scanCallback = object : ScanCallback() {
-            @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
+            @RequiresPermission(anyOf = [Manifest.permission.BLUETOOTH_CONNECT, Manifest.permission.ACCESS_FINE_LOCATION])
             override fun onScanResult(callbackType: Int, result: ScanResult) {
                 bluetoothDevices.add(result.device)
                 onScanFinished(Result.Success(result.device.name))
@@ -65,7 +65,7 @@ class AndroidBluetoothLowEnergyManager(
         bluetoothLeScanner.startScan(filters, settings, scanCallback)
     }
 
-    @RequiresPermission(Manifest.permission.BLUETOOTH_SCAN)
+    @RequiresPermission(anyOf = [Manifest.permission.BLUETOOTH_SCAN, Manifest.permission.ACCESS_FINE_LOCATION])
     override fun stopScanning() {
         scanCallback?.let { cb ->
             bluetoothLeScanner?.stopScan(cb)
@@ -76,14 +76,14 @@ class AndroidBluetoothLowEnergyManager(
         }
     }
 
-    @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
+    @RequiresPermission(anyOf = [Manifest.permission.BLUETOOTH_CONNECT, Manifest.permission.ACCESS_FINE_LOCATION])
     override fun reset() {
         bluetoothDevice = null
         bluetoothGatt?.close()
         bluetoothGatt = null
     }
 
-    @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
+    @RequiresPermission(anyOf = [Manifest.permission.BLUETOOTH_CONNECT, Manifest.permission.ACCESS_FINE_LOCATION])
     override fun startDataReadings(
         deviceName: String,
         onDeviceDataReceived: (DeviceData) -> Unit,
@@ -92,7 +92,7 @@ class AndroidBluetoothLowEnergyManager(
         requireNotNull(bluetoothDevice) { "Bluetooth device is not connected" }
 
         val bluetoothGattCallback = object : BluetoothGattCallback() {
-            @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
+            @RequiresPermission(anyOf = [Manifest.permission.BLUETOOTH_CONNECT, Manifest.permission.ACCESS_FINE_LOCATION])
             override fun onConnectionStateChange(gatt: BluetoothGatt, status: Int, newState: Int) {
                 if (newState == BluetoothProfile.STATE_CONNECTED) {
                     Log.d(TAG, "Connected to GATT server. Requesting MTU...")
@@ -105,7 +105,7 @@ class AndroidBluetoothLowEnergyManager(
                 }
             }
 
-            @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
+            @RequiresPermission(anyOf = [Manifest.permission.BLUETOOTH_CONNECT, Manifest.permission.ACCESS_FINE_LOCATION])
             override fun onMtuChanged(gatt: BluetoothGatt, mtu: Int, status: Int) {
                 Log.d(TAG, "onMtuChanged: mtu=$mtu status=$status")
                 if (status == BluetoothGatt.GATT_SUCCESS) {
@@ -116,7 +116,7 @@ class AndroidBluetoothLowEnergyManager(
                 }
             }
 
-            @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
+            @RequiresPermission(anyOf = [Manifest.permission.BLUETOOTH_CONNECT, Manifest.permission.ACCESS_FINE_LOCATION])
             override fun onServicesDiscovered(gatt: BluetoothGatt, status: Int) {
                 if (status == BluetoothGatt.GATT_SUCCESS) {
                     val service = gatt.getService(SERVICE_UUID)
@@ -166,7 +166,7 @@ class AndroidBluetoothLowEnergyManager(
         bluetoothGatt!!.connect()
     }
 
-    @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
+    @RequiresPermission(anyOf = [Manifest.permission.BLUETOOTH_CONNECT, Manifest.permission.ACCESS_FINE_LOCATION])
     override fun stopDataReadings() {
         requireNotNull(bluetoothGatt) { "Bluetooth GATT is not connected" }
         bluetoothGatt!!.close()

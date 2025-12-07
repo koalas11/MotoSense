@@ -42,6 +42,14 @@ class SettingsViewModel(
         }
     }
 
+    fun setBiggerText(biggerText: Boolean) {
+        updateSettings { currentSettings ->
+            currentSettings.copy(
+                biggerText = biggerText
+            )
+        }
+    }
+
     fun setMotorcycleIcon(icon: MotorcycleIcon) {
         updateSettings { currentSettings ->
             currentSettings.copy(

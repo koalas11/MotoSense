@@ -10,10 +10,14 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import org.lpss.motosense.ui.util.fastUIActions
 import org.lpss.motosense.viewmodel.AppViewModel
 import org.lpss.motosense.viewmodel.DeviceState
 import org.lpss.motosense.viewmodel.DeviceViewModel
@@ -24,11 +28,48 @@ fun HomeScreen(
     appViewModel: AppViewModel,
     deviceViewModel: DeviceViewModel,
 ) {
+    var hide by remember { mutableStateOf(false) }
+    var permissionsOn by remember { mutableStateOf(false) }
+
+    if (!hide) {
+        fastUIActions.RequestNecessaryPermissions(
+            modifier,
+            onGranted = {
+                permissionsOn = true
+                hide = true
+            },
+            onDismiss = {
+                hide = true
+            }
+        )
+    }
+
     Column(
         modifier = modifier
             .fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
+        if (!permissionsOn) {
+            Text(
+                modifier = modifier
+                    .padding(8.dp),
+                text = "Permission is required to scan for devices.",
+            )
+            Button(
+                modifier = modifier
+                    .padding(8.dp),
+                onClick = {
+                    hide = false
+                },
+            ) {
+                Text(
+                    modifier = modifier,
+                    text = "Request Permission",
+                )
+            }
+            return@Column
+        }
+
         val deviceUiState by deviceViewModel.deviceState.collectAsStateWithLifecycle()
         if (deviceUiState is DeviceState.Idle) {
             Button(
@@ -59,7 +100,8 @@ fun HomeScreen(
                 modifier = modifier
                     .padding(8.dp)
                     .fillMaxSize(),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 items(deviceNames) { name ->
                     Button(
@@ -72,7 +114,6 @@ fun HomeScreen(
                     }
                 }
             }
-            return@Column
         }
     }
 }

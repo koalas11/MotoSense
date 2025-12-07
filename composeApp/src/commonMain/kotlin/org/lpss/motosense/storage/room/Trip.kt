@@ -9,5 +9,6 @@ data class Trip(
     @PrimaryKey(autoGenerate = true) val id: Long = 0,
     val title: String,
     val history: List<DeviceData>,
+    val distanceTravelledGpsKm: Double,
     val distanceTravelledKm: Double,
 )

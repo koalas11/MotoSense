@@ -29,6 +29,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import org.lpss.motosense.LocalContentTextStyle
 import org.lpss.motosense.ui.util.iconMaxHeight
 import org.lpss.motosense.ui.util.iconPadding
 import org.lpss.motosense.ui.util.textAlign
@@ -95,9 +96,9 @@ fun ColumnScope.AltitudeContent(
                 Text(
                     modifier = modifier
                         .fillMaxWidth()
-                        .padding(end = 4.dp),
+                        .padding(end = 12.dp),
                     text = buildAnnotatedString {
-                        withStyle(style = SpanStyle(fontSize = MaterialTheme.typography.headlineMedium.fontSize)) {
+                        withStyle(style = SpanStyle(fontSize = LocalContentTextStyle.current.fontSize)) {
                             append(altitude?.toString() ?: "-")
                         }
                         withStyle(style = SpanStyle(fontSize = MaterialTheme.typography.headlineSmall.fontSize)) {

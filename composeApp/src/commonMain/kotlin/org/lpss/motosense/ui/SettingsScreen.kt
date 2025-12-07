@@ -12,6 +12,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowLeft
 import androidx.compose.material.icons.automirrored.filled.ArrowRight
 import androidx.compose.material3.Card
+import androidx.compose.material3.Checkbox
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -135,13 +136,29 @@ fun SettingsScreen(
                     )
                 }
             }
+
+            Text(
+                modifier = modifier
+                    .padding(8.dp)
+                    .align(Alignment.CenterHorizontally),
+                text = "Bigger Text:",
+            )
+            Checkbox(
+                modifier = modifier
+                    .padding(8.dp),
+                checked = settings.biggerText,
+                onCheckedChange = {
+                    settingsViewModel.setBiggerText(it)
+                },
+                enabled = enabled,
+            )
+
             Text(
                 modifier = modifier
                     .padding(8.dp)
                     .align(Alignment.CenterHorizontally),
                 text = "Motorcycle Icon:",
             )
-
             Row(
                 modifier = modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,

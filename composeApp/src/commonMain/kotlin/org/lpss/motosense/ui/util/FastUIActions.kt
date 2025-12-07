@@ -1,6 +1,7 @@
 package org.lpss.motosense.ui.util
 
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 
 interface FastUIActions {
     @Composable
@@ -11,6 +12,13 @@ interface FastUIActions {
     @Composable
     fun DisplayNotification(
         message: String,
+    )
+
+    @Composable
+    fun RequestNecessaryPermissions(
+        modifier: Modifier = Modifier,
+        onDismiss: () -> Unit,
+        onGranted: () -> Unit,
     )
 }
 

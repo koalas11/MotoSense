@@ -105,6 +105,7 @@ android {
             isJniDebuggable = false
             isMinifyEnabled = true
             isShrinkResources = true
+            signingConfig = signingConfigs.getByName("debug")
         }
     }
     compileOptions {

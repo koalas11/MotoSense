@@ -6,5 +6,6 @@ import kotlinx.serialization.Serializable
 data class Settings(
     val dynamicColorMode: DynamicColorMode = DynamicColorMode.ENABLED,
     val themeMode: ThemeMode = ThemeMode.SYSTEM_DEFAULT,
+    val biggerText: Boolean = true,
     val motorcycleIcon: MotorcycleIcon = MotorcycleIcon.DEFAULT,
 )

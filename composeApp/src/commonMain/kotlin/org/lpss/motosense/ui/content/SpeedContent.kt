@@ -33,6 +33,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import motosense.composeapp.generated.resources.Res
 import motosense.composeapp.generated.resources.turtle
 import org.jetbrains.compose.resources.painterResource
+import org.lpss.motosense.LocalContentTextStyle
 import org.lpss.motosense.ui.util.iconMaxHeight
 import org.lpss.motosense.ui.util.iconPadding
 import org.lpss.motosense.ui.util.textAlign
@@ -98,9 +99,9 @@ fun ColumnScope.SpeedContent(
                 Text(
                     modifier = modifier
                         .fillMaxWidth()
-                        .padding(end = 4.dp),
+                        .padding(end = 12.dp),
                     text = buildAnnotatedString {
-                        withStyle(style = SpanStyle(fontSize = MaterialTheme.typography.headlineMedium.fontSize)) {
+                        withStyle(style = SpanStyle(fontSize = LocalContentTextStyle.current.fontSize)) {
                             append(speed?.toString() ?: "-")
                         }
                         withStyle(style = SpanStyle(fontSize = MaterialTheme.typography.headlineSmall.fontSize)) {

@@ -25,6 +25,9 @@ class AppViewModel(
     )
     val themeSettingsState: StateFlow<Pair<DynamicColorMode, ThemeMode>> = _themeSettingsMutableState.asStateFlow()
 
+    private var _biggerTextMutableState: MutableStateFlow<Boolean> = MutableStateFlow(true)
+    val biggerTextState: StateFlow<Boolean> = _biggerTextMutableState.asStateFlow()
+
     private var _settingsMutableState: MutableStateFlow<AppState> = MutableStateFlow(AppState.Loading)
     val settingsState: StateFlow<AppState> = _settingsMutableState.asStateFlow()
 
@@ -48,6 +51,9 @@ class AppViewModel(
                         ) {
                             _themeSettingsMutableState.value =
                                 Pair(settings.dynamicColorMode, settings.themeMode)
+                        }
+                        if (settings.biggerText != _biggerTextMutableState.value) {
+                            _biggerTextMutableState.value = settings.biggerText
                         }
                         _settingsMutableState.value = AppState.Success(settings)
                     }

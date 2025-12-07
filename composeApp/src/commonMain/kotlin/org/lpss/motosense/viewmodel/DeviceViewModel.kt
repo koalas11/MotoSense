@@ -196,6 +196,7 @@ class DeviceViewModel(
                     title = "Trip at ${Clock.System.now().toEpochMilliseconds()}",
                     history = tripHistory.toList(),
                     distanceTravelledKm = _distanceKmMutableState.value,
+                    distanceTravelledGpsKm = _distanceKmGpsMutableState.value,
                 )
             )
             _deviceMutableState.value = DeviceState.Idle

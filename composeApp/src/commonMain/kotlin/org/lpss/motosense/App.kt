@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -12,6 +13,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.TextStyle
 import androidx.lifecycle.HasDefaultViewModelProviderFactory
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.CreationExtras
@@ -31,6 +33,10 @@ val LocalMotoSenseExtras = staticCompositionLocalOf<CreationExtras> {
 
 val LocalPlatformContext = staticCompositionLocalOf<PlatformContext> {
     error("No PlatformContext provided")
+}
+
+val LocalContentTextStyle = staticCompositionLocalOf<TextStyle> {
+    error("No ContentTextStyle provided")
 }
 
 @Composable
@@ -94,10 +100,18 @@ fun Main(
             MotoSenseTheme(
                 appViewModel = appViewModel,
             ) {
-                NavHandler(
-                    modifier = modifier,
-                    appViewModel = appViewModel,
-                )
+                val biggerText by appViewModel.biggerTextState.collectAsStateWithLifecycle()
+                val style = if (biggerText) {
+                    MaterialTheme.typography.displayLarge
+                } else {
+                    MaterialTheme.typography.displayMedium
+                }
+                CompositionLocalProvider(LocalContentTextStyle provides style) {
+                    NavHandler(
+                        modifier = modifier,
+                        appViewModel = appViewModel,
+                    )
+                }
             }
         }
     }
