@@ -50,6 +50,7 @@ object AndroidFastUIActions : FastUIActions {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             perms += Manifest.permission.BLUETOOTH_SCAN
             perms += Manifest.permission.BLUETOOTH_CONNECT
+            perms += Manifest.permission.ACCESS_FINE_LOCATION
         } else {
             perms += Manifest.permission.ACCESS_FINE_LOCATION
         }
