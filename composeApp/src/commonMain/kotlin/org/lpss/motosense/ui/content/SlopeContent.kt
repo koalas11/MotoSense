@@ -32,6 +32,7 @@ import motosense.composeapp.generated.resources.Res
 import motosense.composeapp.generated.resources.elevation
 import org.jetbrains.compose.resources.painterResource
 import org.lpss.motosense.LocalContentTextStyle
+import org.lpss.motosense.MotoSenseBuildConfig
 import org.lpss.motosense.ui.util.iconMaxHeight
 import org.lpss.motosense.ui.util.iconPadding
 import org.lpss.motosense.ui.util.textAlign
@@ -107,8 +108,14 @@ fun RowScope.SlopeContent(
                         withStyle(style = SpanStyle(fontSize = LocalContentTextStyle.current.fontSize)) {
                             append(rounded)
                         }
-                        withStyle(style = SpanStyle(fontSize = MaterialTheme.typography.headlineSmall.fontSize)) {
-                            append(" %")
+                        if (MotoSenseBuildConfig.DEBUG_MODE) {
+                            withStyle(style = SpanStyle(fontSize = LocalContentTextStyle.current.fontSize)) {
+                                append("°")
+                            }
+                        } else {
+                            withStyle(style = SpanStyle(fontSize = MaterialTheme.typography.headlineSmall.fontSize)) {
+                                append(" %")
+                            }
                         }
                     },
                     fontWeight = FontWeight.Bold,

@@ -25,7 +25,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -137,21 +136,47 @@ fun SettingsScreen(
                 }
             }
 
-            Text(
-                modifier = modifier
-                    .padding(8.dp)
-                    .align(Alignment.CenterHorizontally),
-                text = "Bigger Text:",
-            )
-            Checkbox(
-                modifier = modifier
-                    .padding(8.dp),
-                checked = settings.biggerText,
-                onCheckedChange = {
-                    settingsViewModel.setBiggerText(it)
-                },
-                enabled = enabled,
-            )
+            Row(
+                modifier = modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center,
+            ) {
+                Checkbox(
+                    modifier = modifier
+                        .padding(8.dp),
+                    checked = settings.biggerText,
+                    onCheckedChange = {
+                        settingsViewModel.setBiggerText(it)
+                    },
+                    enabled = enabled,
+                )
+                Text(
+                    modifier = modifier
+                        .padding(8.dp),
+                    text = "Bigger Text",
+                )
+            }
+
+            Row(
+                modifier = modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center,
+            ) {
+                Checkbox(
+                    modifier = modifier
+                        .padding(8.dp),
+                    checked = settings.immersiveMode,
+                    onCheckedChange = {
+                        settingsViewModel.setImmersiveMode(it)
+                    },
+                    enabled = enabled,
+                )
+                Text(
+                    modifier = modifier
+                        .padding(8.dp),
+                    text = "Immersive Mode",
+                )
+            }
 
             Text(
                 modifier = modifier
@@ -178,9 +203,7 @@ fun SettingsScreen(
                 ) {
                     Icon(
                         modifier = modifier.size(48.dp),
-                        painter = rememberVectorPainter(
-                            image = Icons.AutoMirrored.Default.ArrowLeft,
-                        ),
+                        imageVector = Icons.AutoMirrored.Default.ArrowLeft,
                         contentDescription = "Change Motorcycle Icon",
                         tint = MaterialTheme.colorScheme.onSurface
                     )
@@ -212,9 +235,7 @@ fun SettingsScreen(
                 ) {
                     Icon(
                         modifier = modifier.size(48.dp),
-                        painter = rememberVectorPainter(
-                            image = Icons.AutoMirrored.Default.ArrowRight,
-                        ),
+                        imageVector = Icons.AutoMirrored.Default.ArrowRight,
                         contentDescription = "Change Motorcycle Icon",
                         tint = MaterialTheme.colorScheme.onSurface
                     )

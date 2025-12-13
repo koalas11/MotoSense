@@ -42,7 +42,6 @@ fun ColumnScope.AltitudeContent(
 ) {
     val altitude by deviceViewModel.altitudeState.collectAsStateWithLifecycle()
 
-
     val icon = if (altitude != null) {
         when {
             altitude!! >= 2500 -> Icons.Outlined.AirplanemodeActive

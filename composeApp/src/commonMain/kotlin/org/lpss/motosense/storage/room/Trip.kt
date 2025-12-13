@@ -11,4 +11,5 @@ data class Trip(
     val history: List<DeviceData>,
     val distanceTravelledGpsKm: Double,
     val distanceTravelledKm: Double,
+    val distanceTravelledAvgKm: Double,
 )

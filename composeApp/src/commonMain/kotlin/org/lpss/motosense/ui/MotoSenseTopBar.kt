@@ -8,7 +8,6 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -21,16 +20,14 @@ import org.lpss.motosense.viewmodel.AppViewModel
 fun MotoSenseTopBar(
     modifier: Modifier = Modifier,
     appViewModel: AppViewModel,
-    scrollBehavior: TopAppBarScrollBehavior,
 ) {
     val backStack by appViewModel.backStack.collectAsStateWithLifecycle()
     CenterAlignedTopAppBar(
-        scrollBehavior = scrollBehavior,
         modifier = modifier,
         title = {
             Text(
                 modifier = modifier,
-                text = "",
+                text = "MotoSense",
             )
         },
         actions = {

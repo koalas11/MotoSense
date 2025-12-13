@@ -15,6 +15,7 @@ import org.lpss.motosense.repository.TripsRepository
 import org.lpss.motosense.storage.room.Trip
 import org.lpss.motosense.util.Log
 import org.lpss.motosense.util.ResultError
+import org.lpss.motosense.util.getFormattedTimestamp
 import kotlin.math.PI
 import kotlin.math.atan2
 import kotlin.math.cos
@@ -58,6 +59,8 @@ class DeviceViewModel(
     val distanceKmGpsState: StateFlow<Double> = _distanceKmGpsMutableState.asStateFlow()
     private var _distanceKmMutableState: MutableStateFlow<Double> = MutableStateFlow(0.0)
     val distanceKmState: StateFlow<Double> = _distanceKmMutableState.asStateFlow()
+    private var _distanceKmAvgMutableState: MutableStateFlow<Double> = MutableStateFlow(0.0)
+    val distanceKmAvgState: StateFlow<Double> = _distanceKmAvgMutableState.asStateFlow()
 
     private var oldLat = Double.NaN
     private var oldLon = Double.NaN
@@ -143,6 +146,8 @@ class DeviceViewModel(
                 _longitudeMutableState.value = it.longitude
                 _timestampMutableState.value = it.timestamp
 
+                var check1 = false
+                var check2 = false
                 if (it.latitude != null && it.longitude != null) {
                     val distanceIncrement = haversine(
                         newLat = it.latitude.toDouble(),
@@ -150,35 +155,29 @@ class DeviceViewModel(
                     )
                     if (distanceIncrement > 0) {
                         _distanceKmGpsMutableState.value += distanceIncrement / 1000.0
+                        check1 = true
                     }
                 }
 
                 if (it.pitchAngle != null && it.speed != null && it.perceivedAcceleration != null && it.accelerationDirection != null && it.timestamp != null) {
-                    val g = 9.80665
-                    val accG = it.perceivedAcceleration.toDouble()
-                    val accMps2 = accG * g
-
-                    val directionRad = it.accelerationDirection.toInt() * 45.0 * PI / 180.0
-                    val accAlongHeading = accMps2 * cos(directionRad)
-
-                    val pitchRad = it.pitchAngle.toDouble() * PI / 180.0
-                    val gravityAlongHeading = g * sin(pitchRad)
-
-                    val realAcc = accAlongHeading - gravityAlongHeading
                     if (tripHistory.size >= 2) {
                         val prev = tripHistory[tripHistory.size - 2]
                         val previousTimestamp = prev.timestamp ?: it.timestamp
                         val timeSeconds = (it.timestamp - previousTimestamp).toDouble() / 1000.0
 
-                        val prevSpeedMps = (prev.speed?.toDouble() ?: it.speed.toDouble()) / 3.6
                         val currSpeedMps = it.speed.toDouble() / 3.6
-                        val avgSpeed = (prevSpeedMps + currSpeedMps) / 2.0
 
-                        val distanceIncrement = (avgSpeed * timeSeconds) + (0.5 * realAcc * timeSeconds * timeSeconds)
+                        val distanceIncrement = currSpeedMps * timeSeconds
                         if (distanceIncrement > 0) {
                             _distanceKmMutableState.value += distanceIncrement / 1000.0
+                            check2 = true
                         }
                     }
+                }
+
+                if (check1 && check2) {
+                    Log.d("DeviceViewModel", "Distance increments: GPS=${_distanceKmGpsMutableState.value} km, Calculated=${_distanceKmMutableState.value} km")
+                    _distanceKmAvgMutableState.value = (_distanceKmGpsMutableState.value + _distanceKmMutableState.value) / 2.0
                 }
             }
             _deviceMutableState.value = DeviceState.Running
@@ -193,10 +192,11 @@ class DeviceViewModel(
             bluetoothLowEnergyManager.reset()
             tripsRepository.insertTrip(
                 Trip(
-                    title = "Trip at ${Clock.System.now().toEpochMilliseconds()}",
+                    title = "Trip at ${getFormattedTimestamp(Clock.System.now().toEpochMilliseconds())}",
                     history = tripHistory.toList(),
                     distanceTravelledKm = _distanceKmMutableState.value,
                     distanceTravelledGpsKm = _distanceKmGpsMutableState.value,
+                    distanceTravelledAvgKm = _distanceKmAvgMutableState.value,
                 )
             )
             _deviceMutableState.value = DeviceState.Idle

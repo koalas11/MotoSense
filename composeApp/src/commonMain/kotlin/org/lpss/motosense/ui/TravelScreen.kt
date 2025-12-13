@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
@@ -29,11 +30,13 @@ import kotlinx.coroutines.delay
 import org.lpss.motosense.ui.content.AltitudeContent
 import org.lpss.motosense.ui.content.DistanceTravelledContent
 import org.lpss.motosense.ui.content.F1GForceRingsComposable
+import org.lpss.motosense.ui.content.MapContent
 import org.lpss.motosense.ui.content.MotorcycleLeanAnimation
 import org.lpss.motosense.ui.content.SlopeContent
 import org.lpss.motosense.ui.content.SpeedContent
 import org.lpss.motosense.ui.util.fastUIActions
 import org.lpss.motosense.util.Log
+import org.lpss.motosense.viewmodel.AppState
 import org.lpss.motosense.viewmodel.AppViewModel
 import org.lpss.motosense.viewmodel.DeviceViewModel
 import kotlin.time.Duration.Companion.seconds
@@ -56,110 +59,127 @@ fun TravelScreen(
         delay(4.seconds)
         iconVisible = false
     }
-    Column(
+    Box(
         modifier = modifier
-            .clickable(
-                interactionSource = null,
-                indication = null,
-            ) {
-                iconToggleCounter = !iconToggleCounter
-            },
+            .fillMaxSize(),
     ) {
-        Row(
+        val settingsState by appViewModel.settingsState.collectAsStateWithLifecycle()
+        val settings = (settingsState as AppState.Success).settings
+        if (settings.immersiveMode) {
+            MapContent(
+                modifier = modifier,
+                deviceViewModel = deviceViewModel,
+            )
+        }
+        Column(
             modifier = modifier
-                .fillMaxWidth()
-                .weight(0.6f),
-            verticalAlignment = Alignment.Top,
-            horizontalArrangement = Arrangement.SpaceBetween,
+                .clickable(
+                    interactionSource = null,
+                    indication = null,
+                ) {
+                    iconToggleCounter = !iconToggleCounter
+                },
         ) {
-            Column(
+            Row(
                 modifier = modifier
-                    .weight(0.25f)
-                    .wrapContentHeight(),
+                    .fillMaxWidth()
+                    .weight(0.6f),
+                verticalAlignment = Alignment.Top,
+                horizontalArrangement = Arrangement.SpaceBetween,
             ) {
-                AltitudeContent(
-                    modifier = modifier,
-                    deviceViewModel = deviceViewModel,
-                )
-                Spacer(
+                Column(
                     modifier = modifier
-                        .weight(0.35f),
-                )
-            }
-            Box(
-                modifier = modifier
-                    .weight(0.5f)
-                    .fillMaxHeight(),
-                contentAlignment = Alignment.Center,
-            ) {
-                val perceivedAcceleration by deviceViewModel.perceivedAccelerationState.collectAsStateWithLifecycle()
-                val accelerationDirection by deviceViewModel.accelerationDirectionState.collectAsStateWithLifecycle()
-
-                F1GForceRingsComposable(
-                    activeRing = accelerationDirection?.toInt(),
-                    gForceValue = perceivedAcceleration,
-                )
-            }
-            Column(
-                modifier = modifier
-                    .weight(0.25f),
-            ) {
-                SpeedContent(
-                    modifier = modifier,
-                    deviceViewModel = deviceViewModel,
-                )
-                if (!iconVisible) {
+                        .weight(0.25f)
+                        .wrapContentHeight(),
+                ) {
+                    AltitudeContent(
+                        modifier = modifier,
+                        deviceViewModel = deviceViewModel,
+                    )
                     Spacer(
                         modifier = modifier
                             .weight(0.35f),
                     )
-                    return@Column
                 }
-                IconButton(
+                Box(
                     modifier = modifier
-                        .align(Alignment.End)
-                        .padding(end = 8.dp)
-                        .weight(0.35f),
-                    onClick = {
-                        deviceViewModel.stopDataReadings()
-                    },
+                        .weight(0.5f)
+                        .fillMaxHeight(),
+                    contentAlignment = Alignment.Center,
                 ) {
-                    Icon(
+                    if (!settings.immersiveMode) {
+                        val perceivedAcceleration by deviceViewModel.perceivedAccelerationState.collectAsStateWithLifecycle()
+                        val accelerationDirection by deviceViewModel.accelerationDirectionState.collectAsStateWithLifecycle()
+
+                        F1GForceRingsComposable(
+                            activeRing = accelerationDirection?.toInt(),
+                            gForceValue = perceivedAcceleration,
+                        )
+                    }
+                }
+                Column(
+                    modifier = modifier
+                        .weight(0.25f),
+                ) {
+                    SpeedContent(
                         modifier = modifier,
-                        imageVector = Icons.Outlined.Close,
-                        contentDescription = "Stop Readings",
-                        tint = MaterialTheme.colorScheme.onBackground,
+                        deviceViewModel = deviceViewModel,
                     )
+                    if (!iconVisible) {
+                        Spacer(
+                            modifier = modifier
+                                .weight(0.35f),
+                        )
+                        return@Column
+                    }
+                    IconButton(
+                        modifier = modifier
+                            .align(Alignment.End)
+                            .padding(end = 8.dp)
+                            .weight(0.35f),
+                        onClick = {
+                            deviceViewModel.stopDataReadings()
+                        },
+                    ) {
+                        Icon(
+                            modifier = modifier,
+                            imageVector = Icons.Outlined.Close,
+                            contentDescription = "Stop Readings",
+                            tint = MaterialTheme.colorScheme.onBackground,
+                        )
+                    }
                 }
             }
-        }
-        Row(
-            modifier = modifier
-                .fillMaxWidth()
-                .weight(0.4f),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween,
-        ) {
-            SlopeContent(
-                modifier = modifier,
-                deviceViewModel = deviceViewModel,
-            )
-            Box(
+            Row(
                 modifier = modifier
-                    .weight(0.5f)
-                    .fillMaxHeight(),
-                contentAlignment = Alignment.Center,
+                    .fillMaxWidth()
+                    .weight(0.4f),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween,
             ) {
-                MotorcycleLeanAnimation(
+                SlopeContent(
                     modifier = modifier,
-                    appViewModel = appViewModel,
+                    deviceViewModel = deviceViewModel,
+                )
+                Box(
+                    modifier = modifier
+                        .weight(0.5f)
+                        .fillMaxHeight(),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    if (!settings.immersiveMode) {
+                        MotorcycleLeanAnimation(
+                            modifier = modifier,
+                            appViewModel = appViewModel,
+                            deviceViewModel = deviceViewModel,
+                        )
+                    }
+                }
+                DistanceTravelledContent(
+                    modifier = modifier,
                     deviceViewModel = deviceViewModel,
                 )
             }
-            DistanceTravelledContent(
-                modifier = modifier,
-                deviceViewModel = deviceViewModel,
-            )
         }
     }
 }

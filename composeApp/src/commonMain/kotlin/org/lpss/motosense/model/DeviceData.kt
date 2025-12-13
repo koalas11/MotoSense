@@ -4,6 +4,7 @@ import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toInstant
 import kotlinx.serialization.Serializable
+import org.lpss.motosense.MotoSenseBuildConfig
 import org.lpss.motosense.util.Log
 import kotlin.math.PI
 import kotlin.math.tan
@@ -46,8 +47,8 @@ data class DeviceData(
 
         const val ROLL_ANGLE_NAN: Short = 255
         const val PITCH_ANGLE_NAN: Short = 255
-        const val PERCEIVED_ACC_NAN: Float = 16f
-        const val ACCELERATION_DIRECTION_NAN: Byte = 16
+        const val PERCEIVED_ACC_NAN: Float = 15f
+        const val ACCELERATION_DIRECTION_NAN: Byte = 15
         const val ALTITUDE_NAN: Short = 8191
         const val SPEED_NAN: UShort = 512u
         const val LATITUDE_NAN = 200f
@@ -148,12 +149,20 @@ data class DeviceData(
                 if (s != PITCH_ANGLE_NAN) s else null
             } else null
 
-            val slopeAngle = if (pitchAngle != null) {
+            val slopeAngle = if (MotoSenseBuildConfig.DEBUG_MODE) {
+                pitchAngle?.let {
+                    val pitchRad = it.toDouble() * PI / 180.0
+                    val slope = tan(pitchRad)
+                    kotlin.math.atan(slope) * 180.0 / PI
+                }
+            } else {
+                if (pitchAngle != null) {
                     100 * tan(
                         (pitchAngle.toDouble() * PI) / 180.0
                     )
-            } else {
-                null
+                } else {
+                    null
+                }
             }
 
             val perceivedAcceleration: Float? = if (has(byteArray, OFFSET_PERCEIVED_ACC, 32)) {

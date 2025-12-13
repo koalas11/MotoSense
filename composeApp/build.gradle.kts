@@ -70,6 +70,10 @@ kotlin {
 
             /* DATETIME */
             implementation(libs.kotlinx.datetime)
+
+            /* MAPLIBRE */
+            implementation(libs.maplibre.compose)
+            implementation(libs.maplibre.compose.m3)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
@@ -99,6 +103,8 @@ android {
             isJniDebuggable = true
             isMinifyEnabled = false
             isShrinkResources = false
+            resValue("string", "app_name", "MotoSense (Debug)")
+            applicationIdSuffix = ".Debug"
         }
         release {
             isDebuggable = false
@@ -130,10 +136,14 @@ buildkonfig {
     objectName = "MotoSenseBuildConfig"
 
     defaultConfigs {
+        val isDebug = gradle.startParameter.taskNames.any { it.contains("Debug", ignoreCase = true) }
+
         buildConfigField(
             BOOLEAN,
             "DEBUG_MODE",
-            if (project.hasProperty("release")) "false" else "true"
+            isDebug.toString(),
+            nullable = false,
+            const = true
         )
         val lp = rootProject.file("local.properties")
         val useMockDataFromProp: Boolean =
@@ -145,8 +155,9 @@ buildkonfig {
         buildConfigField(
             BOOLEAN,
             "USE_MOCK_DATA",
-            if (useMockDataFromProp) "true" else "false"
+            if (useMockDataFromProp) "true" else "false",
+            nullable = false,
+            const = true
         )
     }
 }
-

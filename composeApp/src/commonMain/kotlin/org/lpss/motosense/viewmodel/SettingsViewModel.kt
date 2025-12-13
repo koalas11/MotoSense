@@ -50,6 +50,14 @@ class SettingsViewModel(
         }
     }
 
+    fun setImmersiveMode(immersiveMode: Boolean) {
+        updateSettings { currentSettings ->
+            currentSettings.copy(
+                immersiveMode = immersiveMode
+            )
+        }
+    }
+
     fun setMotorcycleIcon(icon: MotorcycleIcon) {
         updateSettings { currentSettings ->
             currentSettings.copy(

@@ -28,6 +28,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import motosense.composeapp.generated.resources.Res
 import motosense.composeapp.generated.resources.road
 import org.jetbrains.compose.resources.painterResource
+import org.lpss.motosense.MotoSenseBuildConfig
 import org.lpss.motosense.ui.util.iconMaxHeight
 import org.lpss.motosense.ui.util.iconPadding
 import org.lpss.motosense.ui.util.textAlign
@@ -39,9 +40,6 @@ fun RowScope.DistanceTravelledContent(
     modifier: Modifier = Modifier,
     deviceViewModel: DeviceViewModel,
 ) {
-    val distanceKm by deviceViewModel.distanceKmState.collectAsStateWithLifecycle()
-    val distanceKmGps by deviceViewModel.distanceKmGpsState.collectAsStateWithLifecycle()
-
     Card(
         modifier = modifier
             .weight(0.25f)
@@ -72,6 +70,7 @@ fun RowScope.DistanceTravelledContent(
                 modifier = modifier
                     .fillMaxSize(),
             ) {
+
                 Text(
                     modifier = modifier
                         .fillMaxWidth()
@@ -82,38 +81,61 @@ fun RowScope.DistanceTravelledContent(
                     fontWeight = FontWeight.Bold,
                     textAlign = TextAlign.Start,
                 )
-                val rounded = roundToDecimals(distanceKm, 2)
-                Text(
-                    modifier = modifier
-                        .fillMaxWidth()
-                        .padding(end = 12.dp),
-                    text = buildAnnotatedString {
-                        withStyle(style = SpanStyle(fontSize = MaterialTheme.typography.headlineMedium.fontSize)) {
-                            append(rounded.toString())
-                        }
-                        withStyle(style = SpanStyle(fontSize = MaterialTheme.typography.headlineSmall.fontSize)) {
-                            append(" km")
-                        }
-                    },
-                    fontWeight = FontWeight.Bold,
-                    textAlign = textAlign,
-                )
-                val roundedGps = roundToDecimals(distanceKmGps, 2)
-                Text(
-                    modifier = modifier
-                        .fillMaxWidth()
-                        .padding(end = 12.dp),
-                    text = buildAnnotatedString {
-                        withStyle(style = SpanStyle(fontSize = MaterialTheme.typography.headlineMedium.fontSize)) {
-                            append(roundedGps.toString())
-                        }
-                        withStyle(style = SpanStyle(fontSize = MaterialTheme.typography.headlineSmall.fontSize)) {
-                            append(" km")
-                        }
-                    },
-                    fontWeight = FontWeight.Bold,
-                    textAlign = textAlign,
-                )
+
+                if (MotoSenseBuildConfig.DEBUG_MODE) {
+                    val distanceKmGps by deviceViewModel.distanceKmGpsState.collectAsStateWithLifecycle()
+                    val roundedGps = roundToDecimals(distanceKmGps, 2)
+                    Text(
+                        modifier = modifier
+                            .fillMaxWidth()
+                            .padding(end = 12.dp),
+                        text = buildAnnotatedString {
+                            withStyle(style = SpanStyle(fontSize = MaterialTheme.typography.headlineMedium.fontSize)) {
+                                append(roundedGps.toString())
+                            }
+                            withStyle(style = SpanStyle(fontSize = MaterialTheme.typography.headlineSmall.fontSize)) {
+                                append(" km")
+                            }
+                        },
+                        fontWeight = FontWeight.Bold,
+                        textAlign = textAlign,
+                    )
+                    val distanceKm by deviceViewModel.distanceKmState.collectAsStateWithLifecycle()
+                    val rounded = roundToDecimals(distanceKm, 2)
+                    Text(
+                        modifier = modifier
+                            .fillMaxWidth()
+                            .padding(end = 12.dp),
+                        text = buildAnnotatedString {
+                            withStyle(style = SpanStyle(fontSize = MaterialTheme.typography.headlineMedium.fontSize)) {
+                                append(rounded.toString())
+                            }
+                            withStyle(style = SpanStyle(fontSize = MaterialTheme.typography.headlineSmall.fontSize)) {
+                                append(" km")
+                            }
+                        },
+                        fontWeight = FontWeight.Bold,
+                        textAlign = textAlign,
+                    )
+                } else {
+                    val distanceKmAvg by deviceViewModel.distanceKmAvgState.collectAsStateWithLifecycle()
+                    val rounded = roundToDecimals(distanceKmAvg, 2)
+                    Text(
+                        modifier = modifier
+                            .fillMaxWidth()
+                            .padding(end = 12.dp),
+                        text = buildAnnotatedString {
+                            withStyle(style = SpanStyle(fontSize = MaterialTheme.typography.headlineMedium.fontSize)) {
+                                append(rounded.toString())
+                            }
+                            withStyle(style = SpanStyle(fontSize = MaterialTheme.typography.headlineSmall.fontSize)) {
+                                append(" km")
+                            }
+                        },
+                        fontWeight = FontWeight.Bold,
+                        textAlign = textAlign,
+                    )
+                }
             }
         }
     }

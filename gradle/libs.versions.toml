@@ -1,5 +1,5 @@
 [versions]
-agp = "8.13.1"
+agp = "8.13.2"
 android-compileSdk = "36"
 android-minSdk = "24"
 android-targetSdk = "36"
@@ -26,6 +26,7 @@ nav3-core = "1.0.0"
 nav3-ui = "1.0.0-alpha06"
 kotlinx-datetime = "0.7.1"
 build-konfig = "0.17.1"
+maplibre = "0.12.1"
 
 [libraries]
 # Kotlin
@@ -68,6 +69,8 @@ compose-ui = { module = "org.jetbrains.compose.ui:ui", version.ref = "compose-mu
 compose-components-resources = { module = "org.jetbrains.compose.components:components-resources", version.ref = "compose-multiplatform" }
 compose-ui-tooling-preview = { module = "org.jetbrains.compose.ui:ui-tooling-preview", version.ref = "compose-multiplatform" }
 compose-ui-tooling = { module = "org.jetbrains.compose.ui:ui-tooling", version.ref = "compose-multiplatform" }
+maplibre-compose = { module = "org.maplibre.compose:maplibre-compose", version.ref = "maplibre" }
+maplibre-compose-m3 = { module = "org.maplibre.compose:maplibre-compose-material3", version.ref = "maplibre" }
 
 # Others
 junit = { module = "junit:junit", version.ref = "junit" }

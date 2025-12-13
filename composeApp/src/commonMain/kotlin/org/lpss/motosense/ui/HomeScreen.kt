@@ -17,6 +17,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import org.lpss.motosense.MotoSenseBuildConfig
 import org.lpss.motosense.ui.util.fastUIActions
 import org.lpss.motosense.viewmodel.AppViewModel
 import org.lpss.motosense.viewmodel.DeviceState
@@ -68,6 +69,27 @@ fun HomeScreen(
                 )
             }
             return@Column
+        }
+
+        var text: String? = null
+
+        if (MotoSenseBuildConfig.DEBUG_MODE) {
+            text = "DEBUG MODE ENABLED"
+        }
+        if (MotoSenseBuildConfig.USE_MOCK_DATA) {
+            text = if (text != null) {
+                "$text - MOCK DATA ON"
+            } else {
+                "MOCK DATA ON"
+            }
+        }
+
+        if (text != null) {
+            Text(
+                modifier = modifier
+                    .padding(8.dp),
+                text = text,
+            )
         }
 
         val deviceUiState by deviceViewModel.deviceState.collectAsStateWithLifecycle()

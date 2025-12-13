@@ -22,6 +22,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import org.jetbrains.compose.resources.painterResource
 import org.lpss.motosense.LocalContentTextStyle
+import org.lpss.motosense.MotoSenseBuildConfig
 import org.lpss.motosense.viewmodel.AppState
 import org.lpss.motosense.viewmodel.AppViewModel
 import org.lpss.motosense.viewmodel.DeviceViewModel
@@ -69,5 +70,18 @@ fun MotorcycleLeanAnimation(
             style = LocalContentTextStyle.current,
             fontWeight = FontWeight.Bold,
         )
+        if (MotoSenseBuildConfig.DEBUG_MODE) {
+            val accelerationDirection by deviceViewModel.accelerationDirectionState.collectAsStateWithLifecycle()
+            Text(
+                modifier = modifier
+                    .padding(start = 36.dp)
+                    .align(Alignment.CenterStart)
+                    .fillMaxWidth(),
+                textAlign = TextAlign.Start,
+                text = "${accelerationDirection?.toInt() ?: "-"}",
+                style = LocalContentTextStyle.current,
+                fontWeight = FontWeight.Bold,
+            )
+        }
     }
 }
