@@ -76,8 +76,7 @@ fun MapContent(
             val altitude by deviceViewModel.altitudeState.collectAsStateWithLifecycle()
             val accelerationDirection by deviceViewModel.accelerationDirectionState.collectAsStateWithLifecycle()
 
-            val dirSector = ((accelerationDirection?.toInt() ?: 0) % 8 + 8) % 8
-            val dirDeg = dirSector * 45f
+            val dirDeg by deviceViewModel.gpsDirectionAngleState.collectAsStateWithLifecycle()
 
             LaunchedEffect(gpsLatitude, gpsLongitude, altitude, accelerationDirection) {
                 if (gpsLatitude == null || gpsLongitude == null || altitude == null) {
@@ -85,7 +84,7 @@ fun MapContent(
                 }
                 cameraState.animateTo(
                     CameraPosition(
-                        bearing = dirDeg.toDouble(),
+                        bearing = dirDeg?.toDouble() ?: 0.0,
                         target = Position(
                             gpsLongitude!!.toDouble(),
                             gpsLatitude!!.toDouble(),

@@ -55,6 +55,9 @@ class DeviceViewModel(
     private var _timestampMutableState: MutableStateFlow<Long?> = MutableStateFlow(0L)
     val timestampState: StateFlow<Long?> = _timestampMutableState.asStateFlow()
 
+    private var _gpsDirectionAngle: MutableStateFlow<Float?> = MutableStateFlow(0f)
+    val gpsDirectionAngleState: StateFlow<Float?> = _gpsDirectionAngle.asStateFlow()
+
     private var _distanceKmGpsMutableState: MutableStateFlow<Double> = MutableStateFlow(0.0)
     val distanceKmGpsState: StateFlow<Double> = _distanceKmGpsMutableState.asStateFlow()
     private var _distanceKmMutableState: MutableStateFlow<Double> = MutableStateFlow(0.0)
@@ -131,6 +134,23 @@ class DeviceViewModel(
     ) {
         require(_deviceMutableState.value is DeviceState.Ready)
         viewModelScope.launch {
+            // Reset Values
+            oldLat = Double.NaN
+            oldLon = Double.NaN
+            _distanceKmGpsMutableState.value = 0.0
+            _distanceKmMutableState.value = 0.0
+            _distanceKmAvgMutableState.value = 0.0
+            _rollAngleMutableState.value = 0
+            _pitchAngleMutableState.value = 0
+            _slopeAngleMutableState.value = 0.0
+            _perceivedAccelerationMutableState.value = 0f
+            _accelerationDirectionMutableState.value = 0
+            _altitudeMutableState.value = 0
+            _speedMutableState.value = 0u
+            _latitudeMutableState.value = 0f
+            _longitudeMutableState.value = 0f
+            _timestampMutableState.value = 0L
+
             tripHistory.clear()
             bluetoothLowEnergyManager.startDataReadings(deviceName) {
                 Log.d("DeviceViewModel", "Data Reading Callback: $it")
@@ -156,6 +176,21 @@ class DeviceViewModel(
                     if (distanceIncrement > 0) {
                         _distanceKmGpsMutableState.value += distanceIncrement / 1000.0
                         check1 = true
+                    }
+                }
+
+                if (it.latitude != null && it.longitude != null) {
+                    if (tripHistory.size >= 2) {
+                        val prev = tripHistory[tripHistory.size - 2]
+                        if (prev.latitude != null && prev.longitude != null) {
+                            val dLon = (it.longitude - prev.longitude).toDouble()
+                            val y = sin(dLon) * cos(it.latitude.toDouble())
+                            val x = cos(prev.latitude.toDouble()) * sin(it.latitude.toDouble()) -
+                                    sin(prev.latitude.toDouble()) * cos(it.latitude.toDouble()) * cos(dLon)
+                            val bearing = atan2(y, x)
+                            val bearingDegrees = (bearing * 180.0 / PI + 360.0) % 360.0
+                            _gpsDirectionAngle.value = bearingDegrees.toFloat()
+                        }
                     }
                 }
 

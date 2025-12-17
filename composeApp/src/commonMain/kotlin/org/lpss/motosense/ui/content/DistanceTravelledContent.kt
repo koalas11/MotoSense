@@ -125,7 +125,7 @@ fun RowScope.DistanceTravelledContent(
                             .fillMaxWidth()
                             .padding(end = 12.dp),
                         text = buildAnnotatedString {
-                            withStyle(style = SpanStyle(fontSize = MaterialTheme.typography.headlineMedium.fontSize)) {
+                            withStyle(style = SpanStyle(fontSize = MaterialTheme.typography.displayMedium.fontSize)) {
                                 append(rounded.toString())
                             }
                             withStyle(style = SpanStyle(fontSize = MaterialTheme.typography.headlineSmall.fontSize)) {
