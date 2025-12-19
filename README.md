@@ -6,7 +6,7 @@
 ## Team
 - [Lesinigo Simone](https://github.com/simone-lesinigo)
 - [Pinciroli Luca](https://github.com/Pynci)
-- [Santoro Chiara](https://github.com/chiara-santoro)
+- [Santoro Chiara](https://github.com/chiaaxx)
 - [Sanvito Marco](https://github.com/koalas11)
 
 ## How to build & run
