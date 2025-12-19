@@ -199,7 +199,7 @@ class DeviceViewModel(
                     }
                 }
 
-                if (it.pitchAngle != null && it.speed != null && it.perceivedAcceleration != null && it.accelerationDirection != null && it.timestamp != null) {
+                if (it.pitchAngle != null && it.perceivedAcceleration != null && it.accelerationDirection != null && it.timestamp != null) {
                     if (tripHistory.size >= 2) {
                         val prev = tripHistory[tripHistory.size - 2]
                         val previousTimestamp = prev.timestamp ?: it.timestamp
