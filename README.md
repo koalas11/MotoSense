@@ -36,3 +36,6 @@
 - **Bluetooth Communication**: `composeApp/src/androidMain/kotlin/org/lpss/motosense/module/BluetoothLowEnergyManager.android.kt`
 - **Sensor Data Processing (Unpacking and Small Processing)**: `composeApp/src/commonMain/kotlin/org/lpss/motosense/model/DeviceData.kt`
 - **Sensor Data Processing (Processing)**: `composeApp/src/commonMain/kotlin/org/lpss/motosense/viewmodel/DeviceViewModel.kt`
+
+<img src="screenshots/view_no_map.png" alt="Default Visualization Screen" />
+<img src="screenshots/view_map.png" alt="Map Visualization Screen" />
