@@ -7,13 +7,39 @@ import org.lpss.motosense.util.Log
 import org.lpss.motosense.util.Result
 import org.lpss.motosense.util.ResultError
 
+/**
+ * Repository interface for managing trips.
+ */
 interface TripsRepository {
+    /**
+     * Retrieves a flow of all trips.
+     *
+     * @return A Result containing a Flow of a list of Trips or an error.
+     */
     fun getTripsFlow(): Result<Flow<List<Trip>>>
 
+    /**
+     * Retrieves a flow of a trip by its ID.
+     *
+     * @param tripId The ID of the trip to retrieve.
+     * @return A Result containing a Flow of the Trip or null if not found, or an error.
+     */
     fun getTripByIdFlow(tripId: Long): Result<Flow<Trip?>>
 
+    /**
+     * Inserts a new trip.
+     *
+     * @param trip The Trip object to insert.
+     * @return A Result indicating success or failure.
+     */
     suspend fun insertTrip(trip: Trip): Result<Unit>
 
+    /**
+     * Deletes a trip by its ID.
+     *
+     * @param tripId The ID of the trip to delete.
+     * @return A Result indicating success or failure.
+     */
     suspend fun deleteTripById(tripId: Long): Result<Unit>
 }
 

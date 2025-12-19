@@ -166,6 +166,11 @@ class DeviceViewModel(
                 _longitudeMutableState.value = it.longitude
                 _timestampMutableState.value = it.timestamp
 
+                if (it.speed == null || it.speed <= 3u) {
+                    // Ignore readings with speed less than or equal to 3 km/h
+                    return@startDataReadings
+                }
+
                 var check1 = false
                 var check2 = false
                 if (it.latitude != null && it.longitude != null) {

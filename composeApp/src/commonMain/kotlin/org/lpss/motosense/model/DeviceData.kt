@@ -6,10 +6,31 @@ import kotlinx.datetime.toInstant
 import kotlinx.serialization.Serializable
 import org.lpss.motosense.MotoSenseBuildConfig
 import org.lpss.motosense.util.Log
-import kotlin.math.PI
 import kotlin.math.tan
 import kotlin.time.ExperimentalTime
 
+/**
+ * Data class representing the device data parsed from a byte array.
+ *
+ * All fields are nullable to indicate the possibility of missing or invalid data.
+ *
+ * @param rollAngle Roll angle in degrees (-128 to 127), null if not available.
+ * @param pitchAngle Pitch angle in degrees (-128 to 127), null if not available
+ * @param slopeAngle Slope angle in percentage or degrees (depending on build config), null if not available.
+ * @param perceivedAcceleration Perceived acceleration in g, null if not available.
+ * @param accelerationDirection Acceleration direction as a byte, null if not available.
+ * @param altitude Altitude in meters, null if not available.
+ * @param speed Speed in km/h, null if not available.
+ * @param latitude Latitude in degrees, null if not available.
+ * @param longitude Longitude in degrees, null if not available.
+ * @param hour Hour of the timestamp (0-23), null if not available.
+ * @param minute Minute of the timestamp (0-59), null if not available.
+ * @param second Second of the timestamp (0-59), null if not available.
+ * @param day Day of the month (1-31), null if not available.
+ * @param month Month of the year (1-12), null if not available.
+ * @param year Year since 2000 (0-127), null if not available.
+ * @param timestamp Computed timestamp in milliseconds since epoch, null if date/time components are incomplete.
+ */
 @Serializable
 data class DeviceData(
     val rollAngle: Short?,
@@ -131,6 +152,13 @@ data class DeviceData(
             }
         }
 
+        /**
+         * Parses a [DeviceData] instance from the given byte array.
+         *
+         * @param byteArray The byte array containing the device data.
+         * @return The parsed [DeviceData] instance.
+         * @throws IllegalArgumentException if the byte array is too short.
+         */
         fun fromByteArray(byteArray: ByteArray): DeviceData {
             if (byteArray.size * 8 < TOTAL_LENGTH) {
                 Log.d(TAG, "fromByteArray: byte array too short: size=${byteArray.size} bytes")
@@ -151,15 +179,12 @@ data class DeviceData(
 
             val slopeAngle = if (MotoSenseBuildConfig.DEBUG_MODE) {
                 pitchAngle?.let {
-                    val pitchRad = it.toDouble() * PI / 180.0
-                    val slope = tan(pitchRad)
-                    kotlin.math.atan(slope) * 180.0 / PI
+                    pitchAngle.toDouble()
                 }
             } else {
                 if (pitchAngle != null) {
-                    100 * tan(
-                        (pitchAngle.toDouble() * PI) / 180.0
-                    )
+                    val value = 100 * tan(pitchAngle.toDouble())
+                    if (value.isFinite()) value else null
                 } else {
                     null
                 }

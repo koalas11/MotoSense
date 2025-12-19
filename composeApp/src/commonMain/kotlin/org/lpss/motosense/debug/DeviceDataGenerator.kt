@@ -9,6 +9,9 @@ import kotlin.random.Random
 import kotlin.time.Clock
 import kotlin.time.ExperimentalTime
 
+/**
+ * Generates realistic dummy device data for testing purposes.
+ */
 class DeviceDataGenerator {
     private var lastRoll: Int = 0
     private var lastPitch: Int = 0

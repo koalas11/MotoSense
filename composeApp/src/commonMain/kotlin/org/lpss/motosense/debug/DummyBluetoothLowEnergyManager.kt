@@ -11,6 +11,11 @@ import org.lpss.motosense.module.BluetoothLowEnergyManager
 import org.lpss.motosense.util.Result
 import kotlin.time.Duration.Companion.milliseconds
 
+/**
+ * A dummy implementation of [BluetoothLowEnergyManager] that simulates device scanning and data readings.
+ *
+ * This is useful for testing and development without requiring actual Bluetooth hardware.
+ */
 class DummyBluetoothLowEnergyManager : BluetoothLowEnergyManager {
     private var isReadingData: Boolean = false
     private val scope = CoroutineScope(Dispatchers.Default + SupervisorJob())
